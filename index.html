@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Vaidik Dave — Applied AI &amp; GenAI Backend Engineer</title>
+<meta name="description" content="Vaidik Dave — Applied AI &amp; GenAI Backend Engineer. Fault-tolerant LLM routing layers, multi-document RAG pipelines, and serverless AI infrastructure." />
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          paper:  '#0a0a09',
+          panel:  '#111110',
+          line:   '#27241f',
+          line2:  '#1b1916',
+          ink:    '#e8e4da',
+          dim:    '#8c887d',
+          faint:  '#55524a',
+          rust:   '#bb7038',
+        },
+        fontFamily: {
+          serif: ['"Source Serif 4"', 'Georgia', 'serif'],
+          sans:  ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        },
+      },
+    },
+  }
+</script>
+
+<style>
+  html, body { background-color: #0a0a09; }
+  body {
+    font-feature-settings: "ss01";
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  ::selection { background: rgba(187,112,56,0.28); color: #e8e4da; }
+
+  .label {
+    font-size: 11px;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: #8c887d;
+    font-weight: 500;
+  }
+
+  .rule { border-color: #27241f; }
+
+  a.plain {
+    color: #e8e4da;
+    text-decoration: none;
+    border-bottom: 1px solid #3a3630;
+    transition: border-color 0.15s ease, color 0.15s ease;
+  }
+  a.plain:hover { border-color: #bb7038; color: #f1ede2; }
+
+  a.quiet {
+    color: #8c887d;
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+  a.quiet:hover { color: #e8e4da; }
+
+  .entry-link {
+    color: #c8c3b6;
+    text-decoration: none;
+    border-bottom: 1px solid #2c2924;
+    padding-bottom: 1px;
+    transition: border-color 0.15s ease, color 0.15s ease;
+  }
+  .entry-link:hover { color: #e8e4da; border-color: #bb7038; }
+
+  .nav-link {
+    color: #8c887d;
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+  .nav-link:hover { color: #e8e4da; }
+
+  .btn {
+    border: 1px solid #3a3630;
+    color: #e8e4da;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+  }
+  .btn:hover {
+    border-color: #bb7038;
+    background-color: rgba(187,112,56,0.06);
+  }
+
+  .entry {
+    border-left: 1px solid #27241f;
+    transition: border-color 0.2s ease;
+  }
+  .entry:hover { border-left-color: #bb7038; }
+
+  .num {
+    color: #55524a;
+    font-variant-numeric: tabular-nums;
+  }
+
+  ::-webkit-scrollbar { width: 9px; }
+  ::-webkit-scrollbar-track { background: #0a0a09; }
+  ::-webkit-scrollbar-thumb { background: #27241f; border-radius: 0; }
+  ::-webkit-scrollbar-thumb:hover { background: #3a3630; }
+
+  :focus-visible {
+    outline: 1px solid #bb7038;
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+</style>
+</head>
+
+<body class="bg-paper text-ink font-sans antialiased text-[15px] leading-relaxed">
+
+<!-- ============ NAV ============ -->
+<header class="border-b rule">
+  <nav class="max-w-[920px] mx-auto px-6 sm:px-8 h-[60px] flex items-center justify-between">
+    <a href="#top" class="font-serif text-[17px] font-semibold text-ink tracking-tight">Vaidik Dave</a>
+    <div class="hidden sm:flex items-center gap-8 text-[13px]">
+      <a href="#stack" class="nav-link">Stack</a>
+      <a href="#work" class="nav-link">Work</a>
+      <a href="#education" class="nav-link">Education</a>
+      <a href="#contact" class="nav-link">Contact</a>
+    </div>
+  </nav>
+</header>
+
+<main id="top" class="max-w-[920px] mx-auto px-6 sm:px-8">
+
+  <!-- ============ HERO ============ -->
+  <section class="pt-20 pb-16 border-b rule">
+    <p class="label mb-5">Applied AI &amp; GenAI Backend Engineer</p>
+
+    <h1 class="font-serif text-[2.1rem] sm:text-[2.65rem] font-semibold leading-[1.18] tracking-tight max-w-[680px]">
+      I build the infrastructure underneath language models —
+      <span class="text-rust">routing</span>, <span class="text-rust">retrieval</span>,
+      and the failure handling that keeps both running.
+    </h1>
+
+    <p class="mt-7 text-[15.5px] text-dim max-w-[600px] leading-[1.7]">
+      Three production systems: a fault-tolerant LLM routing layer with cascading provider
+      failover, a multi-document RAG pipeline benchmarked across four retrieval strategies,
+      and an async task engine for real-world scheduling. Sole developer on all three, end to end.
+    </p>
+
+    <div class="mt-9 flex flex-wrap items-center gap-x-8 gap-y-3 text-[13.5px]">
+      <a href="#work" class="btn inline-flex items-center px-4 py-2">See the work</a>
+      <a href="davevaidik20@gmail.com" class="quiet">Email ID</a>
+      <a href="https://github.com/Vaidik-Dave23" class="quiet">GitHub</a>
+    </div>
+  </section>
+
+  <!-- ============ STACK ============ -->
+  <section id="stack" class="py-14 border-b rule">
+    <p class="label mb-8">§01 — Stack</p>
+
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-x-8 gap-y-8">
+      <div>
+        <h3 class="text-[12px] font-medium text-dim mb-3">Languages &amp; APIs</h3>
+        <ul class="space-y-1.5 text-[14px] text-ink">
+          <li>Python</li>
+          <li>FastAPI</li>
+          <li>Flask</li>
+          <li>REST design</li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="text-[12px] font-medium text-dim mb-3">Data &amp; Retrieval</h3>
+        <ul class="space-y-1.5 text-[14px] text-ink">
+          <li>PostgreSQL</li>
+          <li>FAISS</li>
+          <li>RAGAS</li>
+          <li>Redis</li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="text-[12px] font-medium text-dim mb-3">Infra &amp; Deployment</h3>
+        <ul class="space-y-1.5 text-[14px] text-ink">
+          <li>Docker</li>
+          <li>GCP Cloud Run</li>
+          <li>Celery</li>
+          <li>JWT lifecycle</li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="text-[12px] font-medium text-dim mb-3">Frontend</h3>
+        <ul class="space-y-1.5 text-[14px] text-ink">
+          <li>React</li>
+          <li>Vue.js</li>
+          <li>Async UI state</li>
+          <li>Streaming UI</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WORK ============ -->
+  <section id="work" class="py-14 border-b rule">
+    <p class="label mb-2">§02 — Production Architecture</p>
+    <p class="text-dim text-[14px] mb-10 max-w-[520px]">Three systems, in the order I'd want a hiring manager to read them.</p>
+
+    <!-- ENTRY 01 -->
+    <article class="entry pl-6 sm:pl-7 pb-12">
+      <div class="flex items-baseline gap-3 mb-1">
+        <span class="num text-[13px]">01</span>
+        <span class="text-[11px] font-medium tracking-wide uppercase text-rust">Flagship</span>
+      </div>
+      <h3 class="font-serif text-[1.4rem] font-semibold tracking-tight mb-1">Auvon.ai</h3>
+      <p class="text-dim text-[14px] mb-5">Fault-tolerant LLM routing &amp; inference backend</p>
+
+      <ul class="space-y-2.5 text-[14.5px] text-ink/90 leading-[1.65] max-w-[640px] mb-5">
+        <li>Engineered a custom 3-tier cascading API failover layer across up to 19 dynamic keys, with automated backoff to mitigate provider quota exhaustion.</li>
+        <li>Deployed containerized microservices on Google Cloud Run for horizontally scalable inference handling.</li>
+        <li>Implemented async request workflows, structured token logging, and sub-second latency tracking across the request lifecycle.</li>
+      </ul>
+
+      <div class="flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px] text-faint mb-4">
+        <span>FastAPI</span><span>React</span><span>PostgreSQL</span><span>Docker</span><span>GCP Cloud Run</span>
+      </div>
+
+      <div class="flex items-center gap-6 text-[13.5px]">
+        <a href="https://auvon-ai.vercel.app/" class="entry-link">Live demo →</a>
+        <a href="https://github.com/Vaidik-Dave23/Auvon.ai" class="entry-link">Source code →</a>
+      </div>
+    </article>
+
+    <!-- ENTRY 02 -->
+    <article class="entry pl-6 sm:pl-7 pb-12">
+      <div class="flex items-baseline gap-3 mb-1">
+        <span class="num text-[13px]">02</span>
+      </div>
+      <h3 class="font-serif text-[1.4rem] font-semibold tracking-tight mb-1">DocMind</h3>
+      <p class="text-dim text-[14px] mb-5">Multi-document RAG benchmarking &amp; evaluation engine</p>
+
+      <ul class="space-y-2.5 text-[14.5px] text-ink/90 leading-[1.65] max-w-[640px] mb-5">
+        <li>Benchmarked 4 distinct chunking strategies against a dense 502-page legal dataset, logging retrieval performance trade-offs.</li>
+        <li>Built an automated evaluation engine mapping answer faithfulness, reducing testing LLM call volumes by 75% via embedding caching.</li>
+        <li>Used local vector indexing and custom metadata gating to constrain retrieval scope per query.</li>
+      </ul>
+
+      <div class="flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px] text-faint mb-4">
+        <span>FastAPI</span><span>FAISS</span><span>PostgreSQL</span><span>RAGAS</span><span>Python</span>
+      </div>
+
+      <div class="flex items-center gap-6 text-[13.5px]">
+        <a href="https://github.com/Vaidik-Dave23/Multi-DOC-RAG" class="entry-link">Source code →</a>
+      </div>
+    </article>
+
+    <!-- ENTRY 03 -->
+    <article class="entry pl-6 sm:pl-7">
+      <div class="flex items-baseline gap-3 mb-1">
+        <span class="num text-[13px]">03</span>
+      </div>
+      <h3 class="font-serif text-[1.4rem] font-semibold tracking-tight mb-1">Asynchronous Parking Engine</h3>
+      <p class="text-dim text-[14px] mb-5">Distributed task processing &amp; allocation scheduling</p>
+
+      <ul class="space-y-2.5 text-[14.5px] text-ink/90 leading-[1.65] max-w-[640px] mb-5">
+        <li>Integrated Redis as a message broker combined with Celery workers to process asynchronous allocation schedules.</li>
+        <li>Designed modular REST patterns with Flask and implemented strict JWT lifecycle checks across protected routes.</li>
+      </ul>
+
+      <div class="flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px] text-faint mb-4">
+        <span>Flask</span><span>Vue.js</span><span>Redis</span><span>Celery</span><span>PostgreSQL</span>
+      </div>
+
+      <div class="flex items-center gap-6 text-[13.5px]">
+        <a href="https://github.com/Vaidik-Dave23/Vechile-Parking-App" class="entry-link">Source code →</a>
+      </div>
+    </article>
+  </section>
+
+  <!-- ============ EDUCATION ============ -->
+  <section id="education" class="py-14 border-b rule">
+    <p class="label mb-8">§03 — Education</p>
+
+    <div class="space-y-7">
+      <div class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1 max-w-[700px]">
+        <div>
+          <h3 class="text-[15px] font-semibold text-ink">IIT Madras — BS in Data Science &amp; Applications</h3>
+          <p class="text-dim text-[13.5px] mt-0.5">In progress</p>
+        </div>
+        <span class="text-faint text-[13px] shrink-0">Expected 2027</span>
+      </div>
+      <div class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1 max-w-[700px]">
+        <div>
+          <h3 class="text-[15px] font-semibold text-ink">Bachelor of Computer Applications (BCA)</h3>
+          <p class="text-dim text-[13.5px] mt-0.5">Graduating</p>
+        </div>
+        <span class="text-faint text-[13px] shrink-0">June 2026</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CONTACT ============ -->
+  <section id="contact" class="py-16">
+    <p class="label mb-6">§04 — Contact</p>
+
+    <p class="font-serif text-[1.6rem] sm:text-[1.9rem] font-semibold tracking-tight leading-snug max-w-[620px] mb-3">
+      Looking for Applied AI Engineer, LLM Engineer, or Core Backend Infrastructure roles.
+    </p>
+    <p class="text-dim text-[14.5px] max-w-[560px] mb-9 leading-[1.7]">
+      Open to teams building production LLM systems — routing, retrieval, evaluation,
+      or the infrastructure that keeps it all online.
+    </p>
+
+    <div class="flex flex-wrap items-center gap-x-8 gap-y-3 text-[14px]">
+      <a href="mailto:davevaidik20@gmail.com" class="plain pb-0.5">davevaidik20@gmail.com</a>
+      <a href="www.linkedin.com/in/vaidik-dave-0457873ab" class="quiet">LinkedIn</a>
+      <a href="https://github.com/Vaidik-Dave23" class="quiet">GitHub</a>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="border-t rule">
+  <div class="max-w-[920px] mx-auto px-6 sm:px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-[12.5px] text-faint">
+    <p>© 2026 Vaidik Dave</p>
+    <p>Built end to end, alone.</p>
+  </div>
+</footer>
+
+</body>
+</html>
