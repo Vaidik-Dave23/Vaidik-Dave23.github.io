@@ -105,6 +105,34 @@
     font-variant-numeric: tabular-nums;
   }
 
+  /* Demo video frame — matches the panel/hairline system, no radius bloat */
+  .demo-frame {
+    background: #111110;
+    border: 1px solid #27241f;
+    position: relative;
+  }
+  .demo-frame::before {
+    content: "";
+    position: absolute;
+    top: -1px; left: -1px; right: -1px;
+    height: 2px;
+    background: #bb7038;
+    opacity: 0.55;
+  }
+  .demo-video-wrap {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%; /* 16:9 */
+    background: #0a0a09;
+  }
+  .demo-video-wrap iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+
   ::-webkit-scrollbar { width: 9px; }
   ::-webkit-scrollbar-track { background: #0a0a09; }
   ::-webkit-scrollbar-thumb { background: #27241f; border-radius: 0; }
@@ -219,26 +247,31 @@
       <h3 class="font-serif text-[1.4rem] font-semibold tracking-tight mb-1">Auvon.ai</h3>
       <p class="text-dim text-[14px] mb-5">Fault-tolerant LLM routing &amp; inference backend</p>
 
-      <ul class="space-y-2.5 text-[14.5px] text-ink/90 leading-[1.65] max-w-[640px] mb-6">
+      <ul class="space-y-2.5 text-[14.5px] text-ink/90 leading-[1.65] max-w-[640px] mb-5">
         <li>Engineered a custom 3-tier cascading API failover layer across up to 19 dynamic keys, with automated backoff to mitigate provider quota exhaustion.</li>
         <li>Deployed containerized microservices on Google Cloud Run for horizontally scalable inference handling.</li>
         <li>Implemented async request workflows, structured token logging, and sub-second latency tracking across the request lifecycle.</li>
       </ul>
 
-      <!-- Embedded Video Demo -->
-      <div class="w-full max-w-[640px] aspect-video rounded-xl overflow-hidden border border-neutral-800 shadow-xl mb-6">
-        <iframe
-          class="w-full h-full"
-          src="https://www.youtube.com/embed/wYbqiBTeo_8"
-          title="Auvon.AI Product Demo"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          referrerpolicy="strict-origin-when-cross-origin"
-          allowfullscreen>
-         iframe>
+      <div class="flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px] text-faint mb-6">
+        <span>FastAPI</span><span>React</span><span>PostgreSQL</span><span>Docker</span><span>GCP Cloud Run</span>
       </div>
 
-      <div class="flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px] text-faint mb-4">
-        <span>FastAPI</span><span>React</span><span>PostgreSQL</span><span>Docker</span><span>GCP Cloud Run</span>
+      <!-- Product demo -->
+      <div class="max-w-[640px] mb-6">
+        <p class="label mb-3">Product demo</p>
+        <div class="demo-frame">
+          <div class="demo-video-wrap">
+            <iframe
+              src="https://www.youtube-nocookie.com/embed/wYbqiBTeo_8"
+              title="Auvon.ai product demo"
+              allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerpolicy="strict-origin-when-cross-origin"
+              loading="lazy"
+              allowfullscreen>
+            </iframe>
+          </div>
+        </div>
       </div>
 
       <div class="flex items-center gap-6 text-[13.5px]">
