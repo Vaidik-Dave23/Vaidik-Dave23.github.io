@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Vaidik Dave — Applied AI &amp; GenAI Backend Engineer</title>
-<meta name="description" content="Vaidik Dave — Applied AI &amp; GenAI Backend Engineer. Fault-tolerant LLM routing layers, multi-document RAG pipelines, and serverless AI infrastructure." />
+<meta name="description" content="Vaidik Dave — Applied AI &amp; GenAI Backend Engineer. Fault-tolerant LLM routing layers, multi-document RAG pipelines, and observability infrastructure." />
 
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -105,6 +105,11 @@
     font-variant-numeric: tabular-nums;
   }
 
+  .stat {
+    font-variant-numeric: tabular-nums;
+    color: #bb7038;
+  }
+
   /* Demo video frame — matches the panel/hairline system, no radius bloat */
   .demo-frame {
     background: #111110;
@@ -177,9 +182,10 @@
     </h1>
 
     <p class="mt-7 text-[15.5px] text-dim max-w-[600px] leading-[1.7]">
-      Three production systems: a fault-tolerant LLM routing layer with cascading provider
-      failover, a multi-document RAG pipeline benchmarked across four retrieval strategies,
-      and an async task engine for real-world scheduling. Sole developer on all three, end to end.
+      Three production systems: a fault-tolerant LLM routing layer that took RAG faithfulness
+      from 14% to 81%, a multi-document RAG pipeline benchmarked across four retrieval
+      strategies, and an async task engine for real-world scheduling. Sole developer on
+      all three, end to end.
     </p>
 
     <div class="mt-9 flex flex-wrap items-center gap-x-8 gap-y-3 text-[13.5px]">
@@ -213,12 +219,12 @@
         </ul>
       </div>
       <div>
-        <h3 class="text-[12px] font-medium text-dim mb-3">Infra &amp; Deployment</h3>
+        <h3 class="text-[12px] font-medium text-dim mb-3">Infra &amp; Observability</h3>
         <ul class="space-y-1.5 text-[14px] text-ink">
           <li>Docker</li>
           <li>GCP Cloud Run</li>
-          <li>Celery</li>
-          <li>JWT lifecycle</li>
+          <li>Prometheus + Grafana</li>
+          <li>OpenTelemetry</li>
         </ul>
       </div>
       <div>
@@ -245,16 +251,17 @@
         <span class="text-[11px] font-medium tracking-wide uppercase text-rust">Flagship</span>
       </div>
       <h3 class="font-serif text-[1.4rem] font-semibold tracking-tight mb-1">Auvon.ai</h3>
-      <p class="text-dim text-[14px] mb-5">Fault-tolerant LLM routing &amp; inference backend</p>
+      <p class="text-dim text-[14px] mb-5">AI study workspace with a fault-tolerant RAG backend</p>
 
       <ul class="space-y-2.5 text-[14.5px] text-ink/90 leading-[1.65] max-w-[640px] mb-5">
-        <li>Engineered a custom 3-tier cascading API failover layer across up to 19 dynamic keys, with automated backoff to mitigate provider quota exhaustion.</li>
-        <li>Deployed containerized microservices on Google Cloud Run for horizontally scalable inference handling.</li>
-        <li>Implemented async request workflows, structured token logging, and sub-second latency tracking across the request lifecycle.</li>
+        <li>Engineered a 3-tier cascading LLM failover layer (Gemini + OpenAI fallback) across up to 19 rotating keys with exponential backoff, cutting provider quota-exhaustion downtime to near zero.</li>
+        <li>Raised RAG faithfulness from <span class="stat">14%</span> to <span class="stat">81%</span> through semantic chunking and evaluation-driven retrieval redesign, measured with a self-built LLM-as-judge harness (81% faithfulness, 99% relevance).</li>
+        <li>Instrumented the full request lifecycle with structured JSON logging, Prometheus metrics, and OpenTelemetry tracing, visualized in a self-hosted Grafana + Jaeger dashboard.</li>
+        <li>Deployed containerized microservices on Google Cloud Run for horizontally scalable inference.</li>
       </ul>
 
       <div class="flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px] text-faint mb-6">
-        <span>FastAPI</span><span>React</span><span>PostgreSQL</span><span>Docker</span><span>GCP Cloud Run</span>
+        <span>FastAPI</span><span>React</span><span>PostgreSQL</span><span>Docker</span><span>GCP Cloud Run</span><span>Grafana</span>
       </div>
 
       <!-- Product demo -->
@@ -289,9 +296,9 @@
       <p class="text-dim text-[14px] mb-5">Multi-document RAG benchmarking &amp; evaluation engine</p>
 
       <ul class="space-y-2.5 text-[14.5px] text-ink/90 leading-[1.65] max-w-[640px] mb-5">
-        <li>Benchmarked 4 distinct chunking strategies against a dense 502-page legal dataset, logging retrieval performance trade-offs.</li>
-        <li>Built an automated evaluation engine mapping answer faithfulness, reducing testing LLM call volumes by 75% via embedding caching.</li>
-        <li>Used local vector indexing and custom metadata gating to constrain retrieval scope per query.</li>
+        <li>Benchmarked 4 chunking strategies against a dense 502-page legal corpus — naive fixed-size chunking outperformed semantic and hierarchical chunking on retrieval precision, a documented counter-intuitive result.</li>
+        <li>Built a custom RAGAS-style faithfulness evaluator with embedding-based caching, cutting LLM API calls per query from 8 to 2 (75% reduction).</li>
+        <li>Diagnosed and fixed a silent retrieval failure traced to a metadata schema mismatch between the chunk store and query layer.</li>
       </ul>
 
       <div class="flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px] text-faint mb-4">
@@ -341,7 +348,7 @@
       <div class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1 max-w-[700px]">
         <div>
           <h3 class="text-[15px] font-semibold text-ink">Bachelor of Computer Applications (BCA)</h3>
-          <p class="text-dim text-[13.5px] mt-0.5">Graduating</p>
+          <p class="text-dim text-[13.5px] mt-0.5">Jai Narain Vyas University</p>
         </div>
         <span class="text-faint text-[13px] shrink-0">July 2026</span>
       </div>
