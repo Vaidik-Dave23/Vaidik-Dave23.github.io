@@ -1,387 +1,536 @@
 <!DOCTYPE html>
-<!-- saved from url=(0032)https://vaidik-dave23.github.io/ -->
-<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
+<html lang="en">
+<head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vaidik Dave — Applied AI &amp; GenAI Backend Engineer</title>
-<meta name="description" content="Vaidik Dave — Applied AI &amp; GenAI Backend Engineer. Fault-tolerant LLM routing layers, multi-document RAG pipelines, and observability infrastructure.">
-
-<script src="./Vaidik Dave — Applied AI &amp; GenAI Backend Engineer_files/saved_resource"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com/">
-<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
-<link href="./Vaidik Dave — Applied AI &amp; GenAI Backend Engineer_files/css2" rel="stylesheet">
-
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        colors: {
-          paper:  '#0a0a09',
-          panel:  '#111110',
-          line:   '#27241f',
-          line2:  '#1b1916',
-          ink:    '#e8e4da',
-          dim:    '#8c887d',
-          faint:  '#55524a',
-          rust:   '#bb7038',
-        },
-        fontFamily: {
-          serif: ['"Source Serif 4"', 'Georgia', 'serif'],
-          sans:  ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        },
-      },
-    },
-  }
-</script>
-
+<title>Vaidik Dave — Applied AI &amp; LLM Engineer</title>
+<meta name="description" content="Vaidik Dave — Applied AI and LLM engineer. Fault-tolerant LLM routing, RAG pipelines with their own evaluation, and LangGraph agents. Sole developer, end to end.">
+<meta property="og:title" content="Vaidik Dave — Applied AI &amp; LLM Engineer">
+<meta property="og:description" content="Fault-tolerant LLM routing, RAG with its own evaluation, and LangGraph agents. Three systems, built solo.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400;1,8..60,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  html, body { background-color: #0a0a09; }
+  :root {
+    --paper: #0a0a09; --panel: #111110; --panel2: #0e0e0d; --line: #27241f; --line2: #1b1916; --line3: #3a3630;
+    --ink: #e8e4da; --ink2: #c8c3b6; --dim: #8c887d; --faint: #55524a; --rust: #bb7038; --rust-soft: rgba(187,112,56,0.08);
+    --green: #7ea36a;
+    --serif: "Source Serif 4", Georgia, serif; --sans: Inter, ui-sans-serif, system-ui, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, monospace;
+    --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; scroll-padding-top: 72px; }
   body {
-    font-feature-settings: "ss01";
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
+    background: var(--paper); color: var(--ink); font-family: var(--sans); font-size: 15px; line-height: 1.65;
+    -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; font-feature-settings: "ss01";
   }
-  ::selection { background: rgba(187,112,56,0.28); color: #e8e4da; }
+  /* paper grain */
+  body::before {
+    content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 100; opacity: .055; mix-blend-mode: screen;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  ::selection { background: rgba(187,112,56,0.28); color: var(--ink); }
+  a { color: inherit; text-decoration: none; }
+  ul { list-style: none; }
+  b { font-weight: 500; color: var(--ink); }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 22px; }
+  @media (min-width: 720px) { .wrap { padding: 0 40px; } }
 
-  .label {
-    font-size: 11px;
-    letter-spacing: 0.11em;
-    text-transform: uppercase;
-    color: #8c887d;
-    font-weight: 500;
-  }
+  .label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dim); }
+  .rust { color: var(--rust); }
+  .it { font-family: var(--serif); font-style: italic; font-weight: 400; }
 
-  .rule { border-color: #27241f; }
+  /* ---------- nav ---------- */
+  header.top { position: sticky; top: 0; z-index: 50; background: rgba(10,10,9,0.78); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
+  .progress { position: absolute; left: 0; bottom: -1px; height: 1px; width: 100%; background: var(--rust); transform-origin: 0 50%; transform: scaleX(var(--sp, 0)); }
+  nav { height: 60px; display: flex; align-items: center; justify-content: space-between; }
+  .brand { display: flex; align-items: center; gap: 10px; font-family: var(--serif); font-size: 17px; font-weight: 600; }
+  .mono-mark { width: 26px; height: 26px; border: 1px solid var(--line3); display: grid; place-items: center; font-family: var(--serif); font-style: italic; font-size: 14px; color: var(--rust); }
+  .navlinks { display: none; gap: 28px; font-size: 13px; align-items: center; }
+  @media (min-width: 720px) { .navlinks { display: flex; } }
+  .navlinks a { color: var(--dim); transition: color .15s; position: relative; }
+  .navlinks a:not(.btn)::after { content: ""; position: absolute; left: 0; right: 0; bottom: -5px; height: 1px; background: var(--rust); transform: scaleX(0); transform-origin: left; transition: transform .3s var(--ease); }
+  .navlinks a:hover, .navlinks a.on { color: var(--ink); }
+  .navlinks a.on::after, .navlinks a:not(.btn):hover::after { transform: scaleX(1); }
+  .btn { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--line3); padding: 8px 15px; font-size: 13px; color: var(--ink); transition: border-color .15s, background .15s; }
+  .btn:hover { border-color: var(--rust); background: var(--rust-soft); }
+  .btn.solid { background: var(--ink); color: var(--paper); border-color: var(--ink); font-weight: 500; }
+  .btn.solid:hover { background: #f4f0e6; border-color: #f4f0e6; }
+  .btn.sm { padding: 5px 11px; font-size: 12.5px; }
+  .mres { display: inline-flex; } @media (min-width: 720px) { .mres { display: none; } }
 
-  a.plain {
-    color: #e8e4da;
-    text-decoration: none;
-    border-bottom: 1px solid #3a3630;
-    transition: border-color 0.15s ease, color 0.15s ease;
-  }
-  a.plain:hover { border-color: #bb7038; color: #f1ede2; }
+  section { border-bottom: 1px solid var(--line); position: relative; }
 
-  a.quiet {
-    color: #8c887d;
-    text-decoration: none;
-    transition: color 0.15s ease;
-  }
-  a.quiet:hover { color: #e8e4da; }
+  /* ---------- hero ---------- */
+  .hero { padding: 72px 0 0; }
+  @media (min-width: 720px) { .hero { padding-top: 104px; } }
+  .hero-grid { display: grid; gap: 48px; }
+  @media (min-width: 960px) { .hero-grid { grid-template-columns: 1fr 300px; gap: 64px; align-items: end; } }
+  .hero h1 { font-family: var(--serif); font-weight: 500; font-size: 2.3rem; line-height: 1.1; letter-spacing: -0.025em; margin-top: 22px; }
+  @media (min-width: 720px) { .hero h1 { font-size: 3.4rem; } }
+  .hero h1 .it { color: var(--rust); }
+  .lede { margin-top: 26px; font-size: 16px; color: var(--dim); max-width: 590px; line-height: 1.72; }
+  .cta { margin-top: 34px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 14px; }
+  .cta .quiet { margin-left: 10px; }
+  .quiet { color: var(--dim); font-size: 13.5px; transition: color .15s; }
+  .quiet:hover { color: var(--ink); }
 
-  .entry-link {
-    color: #c8c3b6;
-    text-decoration: none;
-    border-bottom: 1px solid #2c2924;
-    padding-bottom: 1px;
-    transition: border-color 0.15s ease, color 0.15s ease;
-  }
-  .entry-link:hover { color: #e8e4da; border-color: #bb7038; }
+  .card { border: 1px solid var(--line); background: var(--panel); position: relative; }
+  .card::before { content: ""; position: absolute; top: -1px; left: -1px; right: -1px; height: 2px; background: var(--rust); opacity: .6; }
+  .index-card { padding: 20px 20px 8px; font-size: 13.5px; }
+  .index-card .row { display: grid; grid-template-columns: 92px 1fr; gap: 10px; padding: 11px 0; border-top: 1px solid var(--line2); }
+  .index-card .row:first-of-type { border-top: 0; padding-top: 4px; }
+  .index-card .k { font-family: var(--mono); font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--faint); padding-top: 2px; }
+  .index-card .v { color: var(--ink2); line-height: 1.5; }
+  .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--green); margin-right: 7px; transform: translateY(-1px); animation: pulse 2.6s infinite; }
+  @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(126,163,106,.5); } 70% { box-shadow: 0 0 0 7px rgba(126,163,106,0); } 100% { box-shadow: 0 0 0 0 rgba(126,163,106,0); } }
 
-  .nav-link {
-    color: #8c887d;
-    text-decoration: none;
-    transition: color 0.15s ease;
-  }
-  .nav-link:hover { color: #e8e4da; }
+  .proof { display: grid; grid-template-columns: repeat(2, 1fr); margin-top: 72px; border-top: 1px solid var(--line); }
+  @media (min-width: 720px) { .proof { grid-template-columns: repeat(4, 1fr); } }
+  .proof > div { padding: 22px 18px 26px 0; }
+  .proof > div + div { padding-left: 18px; border-left: 1px solid var(--line2); }
+  @media (max-width: 719px) { .proof > div:nth-child(3) { padding-left: 0; border-left: 0; } .proof > div:nth-child(n+3) { border-top: 1px solid var(--line2); } }
+  .proof .n { font-family: var(--serif); font-size: 2.1rem; font-weight: 500; color: var(--ink); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; line-height: 1.1; }
+  .proof .n small { font-size: 1.2rem; color: var(--rust); margin-left: 1px; }
+  .proof .k { font-size: 12.5px; color: var(--dim); line-height: 1.5; margin-top: 8px; max-width: 200px; }
 
-  .btn {
-    border: 1px solid #3a3630;
-    color: #e8e4da;
-    transition: border-color 0.15s ease, background-color 0.15s ease;
-  }
-  .btn:hover {
-    border-color: #bb7038;
-    background-color: rgba(187,112,56,0.06);
-  }
+  /* ---------- section heads ---------- */
+  .sec-pad { padding: 76px 0; }
+  @media (min-width: 720px) { .sec-pad { padding: 104px 0; } }
+  .sh { display: grid; gap: 10px; margin-bottom: 52px; }
+  @media (min-width: 720px) { .sh { grid-template-columns: 260px 1fr; gap: 40px; align-items: baseline; } }
+  .sh h2 { font-family: var(--serif); font-weight: 500; font-size: 2rem; letter-spacing: -0.02em; line-height: 1.15; }
+  @media (min-width: 720px) { .sh h2 { font-size: 2.6rem; } }
+  .sh p { color: var(--dim); font-size: 14.5px; max-width: 520px; margin-top: 10px; }
 
-  .entry {
-    border-left: 1px solid #27241f;
-    transition: border-color 0.2s ease;
-  }
-  .entry:hover { border-left-color: #bb7038; }
+  /* ---------- work ---------- */
+  .proj { display: grid; gap: 28px; padding: 44px 0 52px; border-top: 1px solid var(--line); }
+  .proj:first-of-type { border-top: 0; padding-top: 0; }
+  @media (min-width: 900px) { .proj { grid-template-columns: 260px 1fr; gap: 40px; } }
+  .proj > div { min-width: 0; }
+  .side { align-self: start; }
+  @media (min-width: 900px) { .side { position: sticky; top: 96px; } }
+  .big-num { font-family: var(--serif); font-size: 4.2rem; line-height: .9; font-weight: 400; color: var(--line3); letter-spacing: -0.04em; transition: color .4s var(--ease); }
+  .proj:hover .big-num, .proj.in-view .big-num { color: var(--rust); }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 10px; }
+  .chip { font-family: var(--mono); font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; padding: 3px 8px; border: 1px solid var(--line); color: var(--dim); }
+  .chip.rustc { color: var(--rust); border-color: rgba(187,112,56,.35); }
+  .chip.live { color: var(--green); border-color: rgba(126,163,106,.35); }
+  .side h3 { font-family: var(--serif); font-size: 1.8rem; font-weight: 600; letter-spacing: -0.02em; line-height: 1.15; }
+  .side .sub { color: var(--dim); font-size: 14px; margin-top: 6px; line-height: 1.55; }
+  .tech { display: flex; flex-wrap: wrap; gap: 4px 12px; font-family: var(--mono); font-size: 11.5px; color: var(--faint); margin-top: 18px; }
+  .links { display: flex; flex-direction: column; gap: 6px; margin-top: 20px; font-size: 13.5px; }
+  .elink { color: var(--ink2); display: inline-flex; align-items: center; gap: 8px; width: fit-content; border-bottom: 1px solid var(--line); padding-bottom: 1px; transition: color .15s, border-color .15s, gap .25s var(--ease); }
+  .elink:hover { color: var(--ink); border-color: var(--rust); gap: 12px; }
 
-  .num {
-    color: #55524a;
-    font-variant-numeric: tabular-nums;
-  }
+  .exhibit { padding: 18px 18px 16px; margin-bottom: 26px; }
+  .ex-head { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 10.5px; letter-spacing: .1em; color: var(--faint); margin-bottom: 16px; }
+  .ex-head .rust { letter-spacing: .1em; }
+  .pts li { font-size: 14.5px; color: rgba(232,228,218,.86); line-height: 1.68; padding: 12px 0 12px 22px; border-top: 1px solid var(--line2); position: relative; }
+  .pts li:first-child { border-top: 0; padding-top: 0; }
+  .pts li::before { content: ""; position: absolute; left: 0; top: 1.4em; width: 10px; height: 1px; background: var(--rust); }
+  .pts li:first-child::before { top: .85em; }
+  .stat { color: var(--rust); font-variant-numeric: tabular-nums; font-weight: 500; }
 
-  .stat {
-    font-variant-numeric: tabular-nums;
-    color: #bb7038;
-  }
+  /* failover chain */
+  .chain { display: flex; flex-direction: column; gap: 8px; }
+  @media (min-width: 640px) { .chain { flex-direction: row; } }
+  .tier { flex: 1; border: 1px solid var(--line); padding: 11px 12px; font-family: var(--mono); font-size: 11.5px; color: var(--dim); transition: all .45s var(--ease); background: var(--panel2); }
+  .tier strong { display: block; font-weight: 500; color: var(--ink2); margin-bottom: 3px; font-size: 12px; }
+  .tier.on { border-color: var(--rust); color: var(--ink2); background: var(--rust-soft); }
+  .tier.on strong { color: var(--rust); }
+  .tier.off { opacity: .4; }
+  .arr { align-self: center; color: var(--faint); font-family: var(--mono); font-size: 12px; transform: rotate(90deg); }
+  @media (min-width: 640px) { .arr { transform: none; } }
+  .log { margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--line); font-family: var(--mono); font-size: 11.5px; color: var(--dim); min-height: 2.6em; }
+  .log span { color: var(--rust); margin-right: 6px; }
 
-  /* Demo video frame — matches the panel/hairline system, no radius bloat */
-  .demo-frame {
-    background: #111110;
-    border: 1px solid #27241f;
-    position: relative;
-  }
-  .demo-frame::before {
-    content: "";
-    position: absolute;
-    top: -1px; left: -1px; right: -1px;
-    height: 2px;
-    background: #bb7038;
-    opacity: 0.55;
-  }
-  .demo-video-wrap {
-    position: relative;
-    width: 100%;
-    padding-top: 56.25%; /* 16:9 */
-    background: #0a0a09;
-  }
-  .demo-video-wrap iframe {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    border: 0;
-  }
+  /* svg diagrams */
+  .diagram { width: 100%; height: auto; display: block; }
+  .svgwrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  @media (max-width: 639px) { .diagram { min-width: 580px; } }
+  .diagram .box { fill: var(--panel2); stroke: var(--line3); }
+  .diagram .box.hi { stroke: var(--rust); fill: rgba(187,112,56,0.08); }
+  .diagram .box.esc { stroke: #6b5a3a; stroke-dasharray: 3 3; }
+  .diagram text { font-family: var(--mono); font-size: 11px; fill: var(--ink2); }
+  .diagram text.s { font-size: 9.5px; fill: var(--faint); }
+  .diagram text.r { fill: var(--rust); }
+  .diagram .edge { stroke: var(--line3); stroke-width: 1; fill: none; }
+  .diagram .edge.flow { stroke: var(--rust); stroke-dasharray: 4 6; animation: dash 1.6s linear infinite; }
+  @keyframes dash { to { stroke-dashoffset: -20; } }
 
-  ::-webkit-scrollbar { width: 9px; }
-  ::-webkit-scrollbar-track { background: #0a0a09; }
-  ::-webkit-scrollbar-thumb { background: #27241f; border-radius: 0; }
-  ::-webkit-scrollbar-thumb:hover { background: #3a3630; }
+  .demo .vid { position: relative; padding-top: 56.25%; background: var(--paper); }
+  .demo .vid iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .demo { margin-top: 26px; }
 
-  :focus-visible {
-    outline: 1px solid #bb7038;
-    outline-offset: 3px;
+  /* ---------- stack ---------- */
+  .stack-rows { border-top: 1px solid var(--line); }
+  .srow { display: grid; gap: 8px; padding: 18px 0; border-bottom: 1px solid var(--line2); }
+  @media (min-width: 720px) { .srow { grid-template-columns: 260px 1fr; gap: 40px; } }
+  .srow h3 { font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--dim); font-weight: 400; padding-top: 3px; }
+  .srow ul { display: flex; flex-wrap: wrap; gap: 6px 22px; font-size: 15px; color: var(--ink2); }
+
+  /* ---------- education ---------- */
+  .edu { display: grid; gap: 6px; padding: 20px 0; border-bottom: 1px solid var(--line2); }
+  .edu:first-of-type { border-top: 1px solid var(--line); }
+  @media (min-width: 720px) { .edu { grid-template-columns: 260px 1fr auto; gap: 40px; align-items: baseline; } }
+  .edu .when { font-family: var(--mono); font-size: 12px; color: var(--faint); }
+  .edu h3 { font-family: var(--serif); font-size: 1.25rem; font-weight: 500; letter-spacing: -0.01em; }
+  .edu p { color: var(--dim); font-size: 13.5px; }
+
+  /* ---------- contact ---------- */
+  .contact { border-bottom: 0; }
+  .contact h2 { font-family: var(--serif); font-weight: 500; font-size: 2.6rem; line-height: 1.05; letter-spacing: -0.03em; margin-top: 18px; max-width: 820px; }
+  @media (min-width: 720px) { .contact h2 { font-size: 4.4rem; } }
+  .contact h2 .it { color: var(--rust); }
+  .contact p { color: var(--dim); font-size: 15px; max-width: 560px; line-height: 1.72; margin: 24px 0 34px; }
+  .mail { font-family: var(--serif); font-size: 1.35rem; border-bottom: 1px solid var(--line3); padding-bottom: 3px; transition: border-color .2s, color .2s; }
+  @media (min-width: 720px) { .mail { font-size: 1.6rem; } }
+  .mail:hover { border-color: var(--rust); color: #f4f0e6; }
+  .clinks { display: flex; flex-wrap: wrap; gap: 10px 26px; margin-top: 28px; font-size: 13.5px; }
+
+  footer { border-top: 1px solid var(--line); padding: 26px 0; font-size: 12.5px; color: var(--faint); font-family: var(--mono); }
+  footer .wrap { display: flex; flex-wrap: wrap; gap: 8px; justify-content: space-between; }
+
+  /* ---------- motion ---------- */
+  .rv { opacity: 0; transform: translateY(18px); transition: opacity .9s var(--ease), transform .9s var(--ease); transition-delay: var(--d, 0ms); }
+  .rv.in { opacity: 1; transform: none; }
+  .hl > span { display: block; overflow: hidden; }
+  .hl > span > span { display: inline-block; transform: translateY(105%); animation: rise 1s var(--ease) forwards; animation-delay: var(--d, 0ms); }
+  @keyframes rise { to { transform: none; } }
+  @media (max-width: 719px) {
+    .hl > span { display: inline; overflow: visible; }
+    .hl > span > span { display: inline; transform: none; opacity: 0; animation: fadein .9s var(--ease) forwards; animation-delay: var(--d, 0ms); }
+    .hl > span::after { content: " "; }
   }
+  @keyframes fadein { to { opacity: 1; } }
 
+  ::-webkit-scrollbar { width: 9px; } ::-webkit-scrollbar-track { background: var(--paper); }
+  ::-webkit-scrollbar-thumb { background: var(--line); } ::-webkit-scrollbar-thumb:hover { background: var(--line3); }
+  :focus-visible { outline: 1px solid var(--rust); outline-offset: 3px; }
   @media (prefers-reduced-motion: reduce) {
-    * { transition: none !important; }
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .rv, .hl > span > span { opacity: 1; transform: none; }
   }
 </style>
-<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:Inter, ui-sans-serif, system-ui, sans-serif;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.mx-auto{margin-left:auto;margin-right:auto}.mb-1{margin-bottom:0.25rem}.mb-10{margin-bottom:2.5rem}.mb-2{margin-bottom:0.5rem}.mb-3{margin-bottom:0.75rem}.mb-4{margin-bottom:1rem}.mb-5{margin-bottom:1.25rem}.mb-6{margin-bottom:1.5rem}.mb-8{margin-bottom:2rem}.mb-9{margin-bottom:2.25rem}.mt-0\.5{margin-top:0.125rem}.mt-7{margin-top:1.75rem}.mt-9{margin-top:2.25rem}.flex{display:flex}.inline-flex{display:inline-flex}.grid{display:grid}.hidden{display:none}.h-\[60px\]{height:60px}.max-w-\[520px\]{max-width:520px}.max-w-\[560px\]{max-width:560px}.max-w-\[600px\]{max-width:600px}.max-w-\[620px\]{max-width:620px}.max-w-\[640px\]{max-width:640px}.max-w-\[680px\]{max-width:680px}.max-w-\[700px\]{max-width:700px}.max-w-\[920px\]{max-width:920px}.shrink-0{flex-shrink:0}.grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-center{align-items:center}.items-baseline{align-items:baseline}.justify-between{justify-content:space-between}.gap-1{gap:0.25rem}.gap-3{gap:0.75rem}.gap-6{gap:1.5rem}.gap-8{gap:2rem}.gap-x-5{column-gap:1.25rem}.gap-x-8{column-gap:2rem}.gap-y-2{row-gap:0.5rem}.gap-y-3{row-gap:0.75rem}.gap-y-8{row-gap:2rem}.space-y-1\.5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.375rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.375rem * var(--tw-space-y-reverse))}.space-y-2\.5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.625rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.625rem * var(--tw-space-y-reverse))}.space-y-7 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.75rem * var(--tw-space-y-reverse))}.border-b{border-bottom-width:1px}.border-t{border-top-width:1px}.bg-paper{--tw-bg-opacity:1;background-color:rgb(10 10 9 / var(--tw-bg-opacity, 1))}.px-4{padding-left:1rem;padding-right:1rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-14{padding-top:3.5rem;padding-bottom:3.5rem}.py-16{padding-top:4rem;padding-bottom:4rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-8{padding-top:2rem;padding-bottom:2rem}.pb-0\.5{padding-bottom:0.125rem}.pb-12{padding-bottom:3rem}.pb-16{padding-bottom:4rem}.pl-6{padding-left:1.5rem}.pt-20{padding-top:5rem}.font-sans{font-family:Inter, ui-sans-serif, system-ui, sans-serif}.font-serif{font-family:"Source Serif 4", Georgia, serif}.text-\[1\.4rem\]{font-size:1.4rem}.text-\[1\.6rem\]{font-size:1.6rem}.text-\[11px\]{font-size:11px}.text-\[12\.5px\]{font-size:12.5px}.text-\[12px\]{font-size:12px}.text-\[13\.5px\]{font-size:13.5px}.text-\[13px\]{font-size:13px}.text-\[14\.5px\]{font-size:14.5px}.text-\[14px\]{font-size:14px}.text-\[15\.5px\]{font-size:15.5px}.text-\[15px\]{font-size:15px}.text-\[17px\]{font-size:17px}.text-\[2\.1rem\]{font-size:2.1rem}.font-medium{font-weight:500}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.leading-\[1\.18\]{line-height:1.18}.leading-\[1\.65\]{line-height:1.65}.leading-\[1\.7\]{line-height:1.7}.leading-relaxed{line-height:1.625}.leading-snug{line-height:1.375}.tracking-tight{letter-spacing:-0.025em}.tracking-wide{letter-spacing:0.025em}.text-dim{--tw-text-opacity:1;color:rgb(140 136 125 / var(--tw-text-opacity, 1))}.text-faint{--tw-text-opacity:1;color:rgb(85 82 74 / var(--tw-text-opacity, 1))}.text-ink{--tw-text-opacity:1;color:rgb(232 228 218 / var(--tw-text-opacity, 1))}.text-ink\/90{color:rgb(232 228 218 / 0.9)}.text-rust{--tw-text-opacity:1;color:rgb(187 112 56 / var(--tw-text-opacity, 1))}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}@media (min-width: 640px){.sm\:flex{display:flex}.sm\:grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}.sm\:flex-row{flex-direction:row}.sm\:items-baseline{align-items:baseline}.sm\:justify-between{justify-content:space-between}.sm\:px-8{padding-left:2rem;padding-right:2rem}.sm\:pl-7{padding-left:1.75rem}.sm\:text-\[1\.9rem\]{font-size:1.9rem}.sm\:text-\[2\.65rem\]{font-size:2.65rem}}</style><script src="chrome-extension://liecbddmkiiihnedobmlmillhodjkdmb/js/recordConsoleEvents.js"></script><style type="text/css" id="mytempCss">._8mqQwQ { display: none; } ._1TWLMK.icF5zO { opacity: 0.01; }</style></head>
+</head>
+<body>
 
-<body class="bg-paper text-ink font-sans antialiased text-[15px] leading-relaxed">
-
-<!-- ============ NAV ============ -->
-<header class="border-b rule">
-  <nav class="max-w-[920px] mx-auto px-6 sm:px-8 h-[60px] flex items-center justify-between">
-    <a href="https://vaidik-dave23.github.io/#top" class="font-serif text-[17px] font-semibold text-ink tracking-tight">Vaidik Dave</a>
-    <div class="hidden sm:flex items-center gap-8 text-[13px]">
-      <a href="https://vaidik-dave23.github.io/#stack" class="nav-link">Stack</a>
-      <a href="https://vaidik-dave23.github.io/#work" class="nav-link">Work</a>
-      <a href="https://vaidik-dave23.github.io/#education" class="nav-link">Education</a>
-      <a href="https://vaidik-dave23.github.io/#contact" class="nav-link">Contact</a>
-    </div>
-  </nav>
+<header class="top">
+  <div class="wrap">
+    <nav>
+      <a href="#top" class="brand"><span class="mono-mark">v</span>Vaidik Dave</a>
+      <div class="navlinks">
+        <a href="#work" data-nav="work">Work</a>
+        <a href="#stack" data-nav="stack">Stack</a>
+        <a href="#education" data-nav="education">Education</a>
+        <a href="#contact" data-nav="contact">Contact</a>
+        <a href="Vaidik_Dave_Resume.pdf" class="btn sm" target="_blank" rel="noopener">Résumé ↗</a>
+      </div>
+      <a href="Vaidik_Dave_Resume.pdf" class="btn sm mres" target="_blank" rel="noopener">Résumé ↗</a>
+    </nav>
+  </div>
+  <div class="progress" aria-hidden="true"></div>
 </header>
 
-<main id="top" class="max-w-[920px] mx-auto px-6 sm:px-8">
+<main id="top">
 
-  <!-- ============ HERO ============ -->
-  <section class="pt-20 pb-16 border-b rule">
-    <p class="label mb-5">Applied AI &amp; GenAI Backend Engineer</p>
-
-    <h1 class="font-serif text-[2.1rem] sm:text-[2.65rem] font-semibold leading-[1.18] tracking-tight max-w-[680px]">
-      I build the infrastructure underneath language models —
-      <span class="text-rust">routing</span>, <span class="text-rust">retrieval</span>,
-      and the failure handling that keeps both running.
-    </h1>
-
-    <p class="mt-7 text-[15.5px] text-dim max-w-[600px] leading-[1.7]">
-      Three production systems: a fault-tolerant LLM routing layer that took RAG faithfulness
-      from 14% to 81%, a multi-document RAG pipeline benchmarked across four retrieval
-      strategies, and an AI-powered payment recovery platform with a LangGraph agent that
-      gates its own actions on confidence. Sole developer on all three, end to end.
-    </p>
-
-    <div class="mt-9 flex flex-wrap items-center gap-x-8 gap-y-3 text-[13.5px]">
-      <a href="https://vaidik-dave23.github.io/#work" class="btn inline-flex items-center px-4 py-2">See the work</a>
-      <a href="mailto:davevaidik20@gmail.com" class="quiet">Email ID</a>
-      <a href="https://github.com/Vaidik-Dave23" class="quiet">GitHub</a>
-    </div>
-  </section>
-
-  <!-- ============ STACK ============ -->
-  <section id="stack" class="py-14 border-b rule">
-    <p class="label mb-8">§01 — Stack</p>
-
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-x-8 gap-y-8">
-      <div>
-        <h3 class="text-[12px] font-medium text-dim mb-3">Languages &amp; APIs</h3>
-        <ul class="space-y-1.5 text-[14px] text-ink">
-          <li>Python</li>
-          <li>FastAPI</li>
-          <li>Flask</li>
-          <li>REST design</li>
-          <li>LangGraph</li>
-        </ul>
-      </div>
-      <div>
-        <h3 class="text-[12px] font-medium text-dim mb-3">Data &amp; Retrieval</h3>
-        <ul class="space-y-1.5 text-[14px] text-ink">
-          <li>PostgreSQL</li>
-          <li>FAISS</li>
-          <li>RAGAS</li>
-          <li>Redis</li>
-        </ul>
-      </div>
-      <div>
-        <h3 class="text-[12px] font-medium text-dim mb-3">Infra &amp; Observability</h3>
-        <ul class="space-y-1.5 text-[14px] text-ink">
-          <li>Docker</li>
-          <li>GCP Cloud Run</li>
-          <li>Prometheus + Grafana</li>
-          <li>OpenTelemetry</li>
-        </ul>
-      </div>
-      <div>
-        <h3 class="text-[12px] font-medium text-dim mb-3">Frontend</h3>
-        <ul class="space-y-1.5 text-[14px] text-ink">
-          <li>React</li>
-          <li>Vue.js</li>
-          <li>Async UI state</li>
-          <li>Streaming UI</li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ WORK ============ -->
-  <section id="work" class="py-14 border-b rule">
-    <p class="label mb-2">§02 — Production Architecture</p>
-    <p class="text-dim text-[14px] mb-10 max-w-[520px]">Three systems, in the order I'd want a hiring manager to read them.</p>
-
-    <!-- ENTRY 01 -->
-    <article class="entry pl-6 sm:pl-7 pb-12">
-      <div class="flex items-baseline gap-3 mb-1">
-        <span class="num text-[13px]">01</span>
-        <span class="text-[11px] font-medium tracking-wide uppercase text-rust">Flagship</span>
-      </div>
-      <h3 class="font-serif text-[1.4rem] font-semibold tracking-tight mb-1">Auvon.ai</h3>
-      <p class="text-dim text-[14px] mb-5">AI study workspace with a fault-tolerant RAG backend</p>
-
-      <ul class="space-y-2.5 text-[14.5px] text-ink/90 leading-[1.65] max-w-[640px] mb-5">
-        <li>Engineered a 3-tier cascading LLM failover layer (Gemini + OpenAI fallback) across up to 19 rotating keys with exponential backoff, cutting provider quota-exhaustion downtime to near zero.</li>
-        <li>Raised RAG faithfulness from <span class="stat">14%</span> to <span class="stat">81%</span> through semantic chunking and evaluation-driven retrieval redesign, measured with a self-built LLM-as-judge harness (81% faithfulness, 99% relevance).</li>
-        <li>Instrumented the full request lifecycle with structured JSON logging, Prometheus metrics, and OpenTelemetry tracing, visualized in a self-hosted Grafana + Jaeger dashboard.</li>
-        <li>Deployed containerized microservices on Google Cloud Run for horizontally scalable inference.</li>
-      </ul>
-
-      <div class="flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px] text-faint mb-6">
-        <span>FastAPI</span><span>React</span><span>PostgreSQL</span><span>Docker</span><span>GCP Cloud Run</span><span>Grafana</span>
-      </div>
-
-      <!-- Product demo -->
-      <div class="max-w-[640px] mb-6">
-        <p class="label mb-3">Product demo</p>
-        <div class="demo-frame">
-          <div class="demo-video-wrap">
-            <iframe src="https://www.youtube.com/embed/wYbqiBTeo_8?si=ZUTJZ61pe1zQi-_c" title="Auvon.ai product demo" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" loading="lazy" allowfullscreen="">
-            </iframe>
+  <!-- ================= HERO ================= -->
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-grid">
+        <div>
+          <p class="label rv">Applied AI &amp; LLM Engineer</p>
+          <h1 class="hl">
+            <span><span style="--d:80ms">I build the layer under</span></span>
+            <span><span style="--d:180ms">language models: <span class="it">routing,</span></span></span>
+            <span><span style="--d:280ms"><span class="it">retrieval,</span> and the failure</span></span>
+            <span><span style="--d:380ms">handling that keeps both up.</span></span>
+          </h1>
+          <p class="lede rv" style="--d:520ms">
+            Three systems, each built solo end to end: an AI study workspace with a <b>multi-model failover router</b> and its own <b>LLM-as-judge evaluation</b>, a multi-document RAG engine with a <b>retrieval benchmark</b>, and a payment-recovery platform run by a <b>confidence-gated LangGraph agent</b>.
+          </p>
+          <div class="cta rv" style="--d:620ms">
+            <a href="#work" class="btn solid">See the work ↓</a>
+            <a href="Vaidik_Dave_Resume.pdf" class="btn" target="_blank" rel="noopener">Résumé (PDF)</a>
+            <a href="https://github.com/Vaidik-Dave23" class="quiet" target="_blank" rel="noopener">GitHub ↗</a>
           </div>
         </div>
+
+        <aside class="card index-card rv" style="--d:700ms" aria-label="At a glance">
+          <div class="row"><span class="k">Status</span><span class="v"><span class="dot"></span>Available now</span></div>
+          <div class="row"><span class="k">Building</span><span class="v">A Socratic AI tutor on top of Auvon's notes and weak topics</span></div>
+          <div class="row"><span class="k">Based</span><span class="v">India · open to remote</span></div>
+          <div class="row"><span class="k">Looking</span><span class="v">Applied AI, LLM or backend infra roles</span></div>
+          <div class="row"><span class="k">Studying</span><span class="v">BS Data Science, IIT Madras</span></div>
+        </aside>
       </div>
 
-      <div class="flex items-center gap-6 text-[13.5px]">
-        <a href="https://auvon-ai.vercel.app/" class="entry-link">Live demo →</a>
-        <a href="https://github.com/Vaidik-Dave23/Auvon.ai" class="entry-link">Source code →</a>
-      </div>
-    </article>
-
-    <!-- ENTRY 02 -->
-    <article class="entry pl-6 sm:pl-7 pb-12">
-      <div class="flex items-baseline gap-3 mb-1">
-        <span class="num text-[13px]">02</span>
-      </div>
-      <h3 class="font-serif text-[1.4rem] font-semibold tracking-tight mb-1">DocMind</h3>
-      <p class="text-dim text-[14px] mb-5">Multi-document RAG benchmarking &amp; evaluation engine</p>
-
-      <ul class="space-y-2.5 text-[14.5px] text-ink/90 leading-[1.65] max-w-[640px] mb-5">
-        <li>Benchmarked 4 chunking strategies against a dense 502-page legal corpus — naive fixed-size chunking outperformed semantic and hierarchical chunking on retrieval precision, a documented counter-intuitive result.</li>
-        <li>Built a custom RAGAS-style faithfulness evaluator with embedding-based caching, cutting LLM API calls per query from 8 to 2 (75% reduction).</li>
-        <li>Diagnosed and fixed a silent retrieval failure traced to a metadata schema mismatch between the chunk store and query layer.</li>
-      </ul>
-
-      <div class="flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px] text-faint mb-4">
-        <span>FastAPI</span><span>FAISS</span><span>PostgreSQL</span><span>RAGAS</span><span>Python</span>
-      </div>
-
-      <div class="flex items-center gap-6 text-[13.5px]">
-        <a href="https://github.com/Vaidik-Dave23/Multi-DOC-RAG" class="entry-link">Source code →</a>
-      </div>
-    </article>
-
-    <!-- ENTRY 03 -->
-    <article class="entry pl-6 sm:pl-7">
-      <div class="flex items-baseline gap-3 mb-1">
-        <span class="num text-[13px]">03</span>
-      </div>
-      <h3 class="font-serif text-[1.4rem] font-semibold tracking-tight mb-1">Recoup</h3>
-      <p class="text-dim text-[14px] mb-5">AI-powered payment recovery platform with a confidence-gated LangGraph agent</p>
-
-      <ul class="space-y-2.5 text-[14.5px] text-ink/90 leading-[1.65] max-w-[640px] mb-5">
-        <li>Built a stateful LangGraph recovery agent (triage → strategize → generate content → execute, or escalate) powered by Gemini, with a confidence threshold and max-attempt limit enforced in backend logic rather than left to the prompt.</li>
-        <li>Wired the agent's output to real recovery actions: Razorpay test-mode Payment Links and optional SMTP outreach, with every action, escalation, and outcome persisted for audit and traceability.</li>
-        <li>Shipped a full-stack system solo — FastAPI + async SQLAlchemy/PostgreSQL backend on Azure App Service, React/TypeScript merchant dashboard on Vercel, with JWT auth and merchant-scoped data isolation.</li>
-        <li>Fixed a production auth bug by pre-hashing passwords with SHA-256 before bcrypt, removing bcrypt's 72-byte truncation limit while staying backward-compatible with legacy hashes.</li>
-      </ul>
-
-      <div class="flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px] text-faint mb-4">
-        <span>FastAPI</span><span>LangGraph</span><span>Gemini</span><span>React</span><span>PostgreSQL</span><span>Razorpay</span>
-      </div>
-
-      <div class="flex items-center gap-6 text-[13.5px]">
-        <a href="https://recoup-one.vercel.app" class="entry-link">Live demo →</a>
-        <a href="https://github.com/Vaidik-Dave23/Recoup" class="entry-link">Source code →</a>
-      </div>
-    </article>
-  </section>
-
-  <!-- ============ EDUCATION ============ -->
-  <section id="education" class="py-14 border-b rule">
-    <p class="label mb-8">§03 — Education</p>
-
-    <div class="space-y-7">
-      <div class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1 max-w-[700px]">
-        <div>
-          <h3 class="text-[15px] font-semibold text-ink">IIT Madras — BS in Data Science &amp; Applications</h3>
-          <p class="text-dim text-[13.5px] mt-0.5">In progress</p>
-        </div>
-        <span class="text-faint text-[13px] shrink-0">Expected 2027</span>
-      </div>
-      <div class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1 max-w-[700px]">
-        <div>
-          <h3 class="text-[15px] font-semibold text-ink">Bachelor of Computer Applications (BCA)</h3>
-          <p class="text-dim text-[13.5px] mt-0.5">Jai Narain Vyas University</p>
-        </div>
-        <span class="text-faint text-[13px] shrink-0">July 2026</span>
+      <div class="proof rv" style="--d:200ms">
+        <div><div class="n"><span data-count="81">81</span><small>%</small></div><div class="k">RAG faithfulness on a 19-question LLM-as-judge benchmark</div></div>
+        <div><div class="n"><span data-count="46">46</span></div><div class="k">real production queries scored, averaging 76% faithfulness</div></div>
+        <div><div class="n"><span data-count="19">19</span></div><div class="k">API keys across 3 model tiers behind one router</div></div>
+        <div><div class="n">8<span class="rust"> → </span>2</div><div class="k">LLM calls per evaluated query after redesigning the harness</div></div>
       </div>
     </div>
   </section>
 
-  <!-- ============ CONTACT ============ -->
-  <section id="contact" class="py-16">
-    <p class="label mb-6">§04 — Contact</p>
+  <!-- ================= WORK ================= -->
+  <section id="work" class="sec-pad">
+    <div class="wrap">
+      <div class="sh rv">
+        <p class="label">§01 — Selected work</p>
+        <div><h2>Three systems, <span class="it rust">built alone.</span></h2><p>In the order I'd want a hiring manager to read them.</p></div>
+      </div>
 
-    <p class="font-serif text-[1.6rem] sm:text-[1.9rem] font-semibold tracking-tight leading-snug max-w-[620px] mb-3">
-      Looking for Applied AI Engineer, LLM Engineer, or Core Backend Infrastructure roles.
-    </p>
-    <p class="text-dim text-[14.5px] max-w-[560px] mb-9 leading-[1.7]">
-      Open to teams building production LLM systems — routing, retrieval, evaluation,
-      or the infrastructure that keeps it all online.
-    </p>
+      <!-- AUVON -->
+      <article class="proj" data-proj>
+        <div class="side rv">
+          <div class="big-num">01</div>
+          <div class="chips"><span class="chip rustc">Flagship</span><span class="chip live">● Live</span></div>
+          <h3>Auvon.ai</h3>
+          <p class="sub">AI study workspace on a fault-tolerant LLM backend: notes, PDF chat, checkpoints and roadmaps.</p>
+          <div class="tech"><span>FastAPI</span><span>React</span><span>MongoDB</span><span>Gemini</span><span>OpenAI</span><span>OTel</span><span>Azure</span></div>
+          <div class="links">
+            <a href="https://auvon-ai.vercel.app/" class="elink" target="_blank" rel="noopener">Live demo <span>→</span></a>
+            <a href="https://github.com/Vaidik-Dave23/Auvon.ai" class="elink" target="_blank" rel="noopener">Source code <span>→</span></a>
+          </div>
+        </div>
+        <div>
+          <div class="card exhibit rv" id="flow" style="--d:100ms" aria-label="Failover router diagram">
+            <div class="ex-head"><span>FIG. 1 · LLM ROUTER</span><span class="rust" id="flow-stage">LIVE</span></div>
+            <div class="chain">
+              <div class="tier on"><strong>Gemini 3.5 Flash</strong>primary · up to 19 keys</div>
+              <div class="arr">→</div>
+              <div class="tier"><strong>Gemini 2.5 Flash</strong>secondary</div>
+              <div class="arr">→</div>
+              <div class="tier"><strong>GPT-4o-mini</strong>safety net</div>
+            </div>
+            <div class="log" id="flow-log"><span>&gt;</span>request → Gemini 3.5 Flash · 200 OK</div>
+          </div>
+          <ul class="pts rv" style="--d:160ms">
+            <li>Built a <b>cascading LLM router</b>: requests walk up to 19 shuffled Gemini keys across two Gemini models before falling back to GPT-4o-mini. Keys that hit their daily quota are blacklisted until UTC midnight; per-minute 429s skip straight to the next key.</li>
+            <li>Wrote an <b>LLM-as-judge evaluator</b> that scores RAG answers for faithfulness and relevance: <span class="stat">81%</span> faithfulness and <span class="stat">99%</span> relevance on a 19-question benchmark, up from the mid-60s once the prompt forbade outside knowledge, and <span class="stat">76%</span> across <span class="stat">46</span> real production queries.</li>
+            <li>Built PDF RAG chat on a custom markdown-aware chunker, Gemini embeddings and per-user cosine retrieval; notes, quizzes and roadmaps generate from topics, PDFs or YouTube videos.</li>
+            <li>Instrumented every request with structured JSON logs, request IDs, Prometheus metrics for LLM latency and tokens per provider/model, and OpenTelemetry traces in Grafana and Jaeger.</li>
+            <li>Shipped on Azure App Service (CI/CD via GitHub Actions) and Vercel, with MongoDB Atlas, Google OAuth + JWT and per-user rate limiting.</li>
+          </ul>
+          <div class="card demo rv">
+            <div class="vid"><iframe src="https://www.youtube-nocookie.com/embed/wYbqiBTeo_8" title="Auvon.ai product demo" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>
+          </div>
+        </div>
+      </article>
 
-    <div class="flex flex-wrap items-center gap-x-8 gap-y-3 text-[14px]">
-      <a href="mailto:davevaidik20@gmail.com" class="plain pb-0.5">davevaidik20@gmail.com</a>
-      <a href="https://www.linkedin.com/in/vaidik-dave-0457873ab" class="quiet">LinkedIn</a>
-      <a href="https://github.com/Vaidik-Dave23" class="quiet">GitHub</a>
+      <!-- DOCMIND -->
+      <article class="proj" data-proj>
+        <div class="side rv">
+          <div class="big-num">02</div>
+          <div class="chips"><span class="chip">Research</span></div>
+          <h3>DocMind</h3>
+          <p class="sub">Multi-document RAG engine with a retrieval benchmark over a 502-page legal corpus.</p>
+          <div class="tech"><span>FastAPI</span><span>FAISS</span><span>Sentence-Transformers</span><span>Gemini</span></div>
+          <div class="links">
+            <a href="https://github.com/Vaidik-Dave23/Multi-DOC-RAG" class="elink" target="_blank" rel="noopener">Source code <span>→</span></a>
+          </div>
+        </div>
+        <div>
+          <div class="card exhibit rv" style="--d:100ms">
+            <div class="ex-head"><span>FIG. 2 · RETRIEVAL PIPELINE</span><span>502 PAGES</span></div>
+            <div class="svgwrap"><svg class="diagram" viewBox="0 0 640 150" role="img" aria-label="PDFs to chunker to MiniLM embeddings to FAISS to Gemini, with an evaluator using 2 LLM calls per query">
+              <path class="edge" d="M98 50 H128 M226 50 H256 M354 50 H384 M482 50 H512" />
+              <path class="edge flow" d="M98 50 H128 M226 50 H256 M354 50 H384 M482 50 H512" />
+              <rect class="box" x="8" y="28" width="90" height="44"/><text x="53" y="48" text-anchor="middle">PDFs</text><text class="s" x="53" y="62" text-anchor="middle">legal corpus</text>
+              <rect class="box hi" x="128" y="28" width="98" height="44"/><text x="177" y="48" text-anchor="middle" class="r">chunker</text><text class="s" x="177" y="62" text-anchor="middle">fixed · semantic</text>
+              <rect class="box" x="256" y="28" width="98" height="44"/><text x="305" y="48" text-anchor="middle">MiniLM</text><text class="s" x="305" y="62" text-anchor="middle">256-token cap</text>
+              <rect class="box" x="384" y="28" width="98" height="44"/><text x="433" y="48" text-anchor="middle">FAISS</text><text class="s" x="433" y="62" text-anchor="middle">top-k</text>
+              <rect class="box" x="512" y="28" width="120" height="44"/><text x="572" y="48" text-anchor="middle">Gemini</text><text class="s" x="572" y="62" text-anchor="middle">answer</text>
+              <path class="edge" d="M572 72 V104 H230" />
+              <rect class="box hi" x="128" y="88" width="102" height="44"/><text x="179" y="108" text-anchor="middle" class="r">evaluator</text><text class="s" x="179" y="122" text-anchor="middle">8 → 2 LLM calls</text>
+              <text class="s" x="300" y="124">Recall@k · MRR per chunker</text>
+            </svg></div>
+          </div>
+          <ul class="pts rv" style="--d:160ms">
+            <li>Built multi-document RAG over a <span class="stat">502-page</span> legal corpus with FAISS and all-MiniLM-L6-v2 embeddings.</li>
+            <li>Rebuilt a RAGAS-style faithfulness evaluator with embedding-based caching, cutting LLM calls per evaluated query from <span class="stat">8 to 2</span>.</li>
+            <li>Benchmarked fixed-size against semantic chunking on Recall@k and MRR, and found the winner flips with how gold labels are defined. Traced the semantic chunker's misses to <span class="stat">19 of 83</span> chunks running past MiniLM's 256-token limit, where evidence was silently truncated.</li>
+            <li>Diagnosed and fixed a silent retrieval failure caused by a metadata schema mismatch between the chunk store and the query layer.</li>
+          </ul>
+        </div>
+      </article>
+
+      <!-- RECOUP -->
+      <article class="proj" data-proj>
+        <div class="side rv">
+          <div class="big-num">03</div>
+          <div class="chips"><span class="chip">Agent</span><span class="chip live">● Live</span></div>
+          <h3>Recoup</h3>
+          <p class="sub">AI payment-recovery platform run by a confidence-gated LangGraph agent.</p>
+          <div class="tech"><span>FastAPI</span><span>LangGraph</span><span>Gemini</span><span>PostgreSQL</span><span>React/TS</span><span>Razorpay</span></div>
+          <div class="links">
+            <a href="https://recoup-one.vercel.app/" class="elink" target="_blank" rel="noopener">Live demo <span>→</span></a>
+            <a href="https://github.com/Vaidik-Dave23/Recoup" class="elink" target="_blank" rel="noopener">Source code <span>→</span></a>
+          </div>
+        </div>
+        <div>
+          <div class="card exhibit rv" style="--d:100ms">
+            <div class="ex-head"><span>FIG. 3 · RECOVERY AGENT</span><span>LANGGRAPH</span></div>
+            <div class="svgwrap"><svg class="diagram" viewBox="0 0 640 160" role="img" aria-label="Agent graph: triage, strategize, generate content, confidence gate, then execute or escalate to a human">
+              <path class="edge" d="M100 52 H128 M226 52 H254 M352 52 H380 M466 52 H494" />
+              <path class="edge flow" d="M100 52 H128 M226 52 H254 M352 52 H380 M466 52 H494" />
+              <rect class="box" x="8" y="30" width="92" height="44"/><text x="54" y="50" text-anchor="middle">triage</text><text class="s" x="54" y="64" text-anchor="middle">failed payment</text>
+              <rect class="box" x="128" y="30" width="98" height="44"/><text x="177" y="50" text-anchor="middle">strategize</text><text class="s" x="177" y="64" text-anchor="middle">Gemini</text>
+              <rect class="box" x="254" y="30" width="98" height="44"/><text x="303" y="50" text-anchor="middle">generate</text><text class="s" x="303" y="64" text-anchor="middle">message + link</text>
+              <polygon class="box hi" points="423,22 466,52 423,82 380,52"/><text x="423" y="49" text-anchor="middle" class="r">conf ≥ τ</text><text class="s" x="423" y="62" text-anchor="middle">gate</text>
+              <rect class="box hi" x="494" y="30" width="138" height="44"/><text x="563" y="50" text-anchor="middle" class="r">execute</text><text class="s" x="563" y="64" text-anchor="middle">Razorpay link · SMTP</text>
+              <path class="edge" d="M423 82 V120 H494" />
+              <rect class="box esc" x="494" y="100" width="138" height="40"/><text x="563" y="118" text-anchor="middle">escalate</text><text class="s" x="563" y="131" text-anchor="middle">human review</text>
+              <text class="s" x="416" y="134" text-anchor="end">low confidence / max attempts</text>
+              <text class="s" x="8" y="104">every action, escalation and outcome</text><text class="s" x="8" y="118">is persisted for audit</text>
+            </svg></div>
+          </div>
+          <ul class="pts rv" style="--d:160ms">
+            <li>Built a stateful LangGraph recovery agent (triage → strategize → generate content → execute, or escalate) on Gemini, with the confidence threshold and max-attempt limit enforced in backend code rather than left to the prompt.</li>
+            <li>Wired the agent to real actions: Razorpay test-mode Payment Links and optional SMTP outreach, with every action, escalation and outcome persisted for audit.</li>
+            <li>Added a Fault Lab that replays failure scenarios reproducibly, so agent behaviour can be tested before it reaches a customer.</li>
+            <li>Shipped solo: FastAPI + async SQLAlchemy/PostgreSQL on Azure App Service and a React/TypeScript merchant dashboard on Vercel, with JWT auth and merchant-scoped data isolation. Fixed a production auth bug by pre-hashing with SHA-256 before bcrypt, removing the 72-byte truncation while keeping legacy hashes valid.</li>
+          </ul>
+        </div>
+      </article>
     </div>
   </section>
 
+  <!-- ================= STACK ================= -->
+  <section id="stack" class="sec-pad">
+    <div class="wrap">
+      <div class="sh rv">
+        <p class="label">§02 — Stack</p>
+        <div><h2>What I reach for.</h2></div>
+      </div>
+      <div class="stack-rows rv" style="--d:100ms">
+        <div class="srow"><h3>LLM &amp; retrieval</h3><ul><li>RAG &amp; chunking</li><li>LLM-as-judge evals</li><li>LangGraph agents</li><li>FAISS</li><li>Gemini &amp; OpenAI APIs</li></ul></div>
+        <div class="srow"><h3>Backend</h3><ul><li>Python</li><li>FastAPI</li><li>Pydantic</li><li>REST design</li><li>JWT &amp; OAuth</li><li>Redis</li></ul></div>
+        <div class="srow"><h3>Data &amp; infra</h3><ul><li>MongoDB</li><li>PostgreSQL</li><li>Docker</li><li>Azure App Service</li><li>GCP Cloud Run</li><li>Vercel</li><li>GitHub Actions</li></ul></div>
+        <div class="srow"><h3>Observability</h3><ul><li>Prometheus</li><li>Grafana</li><li>OpenTelemetry</li><li>Jaeger</li><li>structlog</li></ul></div>
+        <div class="srow"><h3>Frontend</h3><ul><li>React</li><li>TypeScript</li><li>Vite</li><li>Tailwind CSS</li></ul></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= EDUCATION ================= -->
+  <section id="education" class="sec-pad">
+    <div class="wrap">
+      <div class="sh rv">
+        <p class="label">§03 — Education</p>
+        <div><h2>Where I trained.</h2></div>
+      </div>
+      <div class="rv" style="--d:100ms">
+        <div class="edu"><span class="when">Expected May 2027</span><div><h3>BS in Data Science &amp; Applications</h3><p>Indian Institute of Technology Madras · online degree</p></div></div>
+        <div class="edu"><span class="when">2026</span><div><h3>Bachelor of Computer Applications</h3><p>Jai Narain Vyas University, Jodhpur</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CONTACT ================= -->
+  <section id="contact" class="sec-pad contact">
+    <div class="wrap">
+      <p class="label rv">§04 — Contact</p>
+      <h2 class="rv" style="--d:80ms">Building production LLM systems? <span class="it">Let's talk.</span></h2>
+      <p class="rv" style="--d:140ms">Looking for Applied AI Engineer, LLM Engineer or backend infrastructure roles, remote or in India. Routing, retrieval, evaluation, or the infrastructure that keeps it all online.</p>
+      <a href="mailto:davevaidik20@gmail.com" class="mail rv" style="--d:200ms">davevaidik20@gmail.com</a>
+      <div class="clinks rv" style="--d:260ms">
+        <a href="https://www.linkedin.com/in/vaidik-dave-0457873ab" class="elink" target="_blank" rel="noopener">LinkedIn <span>↗</span></a>
+        <a href="https://github.com/Vaidik-Dave23" class="elink" target="_blank" rel="noopener">GitHub <span>↗</span></a>
+        <a href="Vaidik_Dave_Resume.pdf" class="elink" target="_blank" rel="noopener">Résumé <span>↗</span></a>
+      </div>
+    </div>
+  </section>
 </main>
 
-<!-- ============ FOOTER ============ -->
-<footer class="border-t rule">
-  <div class="max-w-[920px] mx-auto px-6 sm:px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-[12.5px] text-faint">
-    <p>© 2026 Vaidik Dave</p>
-    <p>Built end to end, alone.</p>
-  </div>
+<footer>
+  <div class="wrap"><span>© 2026 Vaidik Dave</span><span>Built end to end, alone.</span></div>
 </footer>
 
+<script>
+(function () {
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+  // reveal on scroll
+  var els = document.querySelectorAll(".rv");
+  if (reduce || !("IntersectionObserver" in window)) {
+    els.forEach(function (e) { e.classList.add("in"); });
+  } else {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); } });
+    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.06 });
+    els.forEach(function (e) { io.observe(e); });
+  }
 
-</body></html>
+  // project number lights up while its project is in view
+  var projs = document.querySelectorAll("[data-proj]");
+  if ("IntersectionObserver" in window) {
+    var pio = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) { en.target.classList.toggle("in-view", en.isIntersecting); });
+    }, { rootMargin: "-40% 0px -40% 0px" });
+    projs.forEach(function (p) { pio.observe(p); });
+  }
+
+  // scroll progress + active nav
+  var root = document.documentElement, links = document.querySelectorAll("[data-nav]");
+  var secs = ["work", "stack", "education", "contact"].map(function (id) { return document.getElementById(id); });
+  var ticking = false;
+  function onScroll() {
+    ticking = false;
+    var max = root.scrollHeight - innerHeight;
+    root.style.setProperty("--sp", max > 0 ? (scrollY / max).toFixed(4) : 0);
+    var cur = "";
+    secs.forEach(function (s) { if (s && s.getBoundingClientRect().top < innerHeight * 0.35) cur = s.id; });
+    links.forEach(function (a) { a.classList.toggle("on", a.dataset.nav === cur); });
+  }
+  addEventListener("scroll", function () { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
+  onScroll();
+
+  // count-up
+  if (!reduce && "IntersectionObserver" in window) {
+    var cio = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        var el = en.target, end = +el.dataset.count, t0 = null;
+        function step(t) { if (!t0) t0 = t; var p = Math.min(1, (t - t0) / 1200); el.textContent = Math.round(end * (1 - Math.pow(1 - p, 3))); if (p < 1) requestAnimationFrame(step); }
+        requestAnimationFrame(step); cio.unobserve(el);
+      });
+    }, { threshold: 0.6 });
+    document.querySelectorAll("[data-count]").forEach(function (n) { cio.observe(n); });
+  }
+
+  // failover diagram cycles while visible
+  var flow = document.getElementById("flow");
+  if (flow && !reduce && "IntersectionObserver" in window) {
+    var tiers = flow.querySelectorAll(".tier"), log = document.getElementById("flow-log"), stage = document.getElementById("flow-stage");
+    var steps = [
+      [0, "request → Gemini 3.5 Flash · 200 OK"],
+      [0, "Gemini 3.5 Flash · 429 daily quota → key blacklisted until UTC midnight"],
+      [1, "failover → Gemini 2.5 Flash · 200 OK"],
+      [1, "Gemini 2.5 Flash · 429 → final fallback"],
+      [2, "failover → GPT-4o-mini · 200 OK · no error shown to the user"]
+    ];
+    var i = 0, timer = null;
+    function show() {
+      var s = steps[i];
+      tiers.forEach(function (t, k) { t.classList.toggle("on", k === s[0]); t.classList.toggle("off", k < s[0]); });
+      log.innerHTML = "<span>&gt;</span>" + s[1];
+      stage.textContent = "STEP " + (i + 1) + " / " + steps.length;
+      i = (i + 1) % steps.length;
+    }
+    new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting && !timer) { show(); timer = setInterval(show, 2200); }
+        else if (!en.isIntersecting && timer) { clearInterval(timer); timer = null; }
+      });
+    }, { threshold: 0.4 }).observe(flow);
+  }
+})();
+</script>
+</body>
+</html>
