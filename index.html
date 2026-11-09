@@ -1,201 +1,234 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Vaidik Dave · Premium</title>
+<title>Vaidik Dave</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<meta name="description" content="Vaidik Dave, Applied AI and GenAI backend engineer. Model routing, grounded RAG, evaluation and agents.">
+<meta name="description" content="Vaidik Dave, Applied AI and GenAI backend engineer. LLM failover routing, multi-document RAG evaluation, and confidence-gated agents.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Hanken+Grotesk:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: warm black stage, ivory type, one ember accent. Big serif display, quiet grotesk body. Work scrolls sideways on desktop. */
+/* Layout: fixed WebGL particle field behind everything; content floats over it in glass panels. Particles morph per section. */
 :root {
-  --ink: #0f0d0b;        /* warm black */
-  --ink-2: #171411;
-  --ivory: #efe9df;      /* warm white */
-  --ivory-dim: #a39b8e;
-  --ivory-faint: #5a544b;
-  --line: #2a2520;
-  --ember: #ff6b2c;      /* the one color */
-  --f-serif: "Cormorant Garamond", "Cormorant", Garamond, "Times New Roman", serif;
-  --f-sans: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --f-mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
-  --ease: cubic-bezier(.16, 1, .3, 1);
+  --bg: #050507;
+  --glass: rgba(14, 12, 24, .55);
+  --line: rgba(255, 255, 255, .09);
+  --line-2: rgba(255, 255, 255, .18);
+  --fg: #f3f1fb;
+  --dim: #a09cb8;
+  --faint: #5f5b75;
+  --uv: #8b6dff;      /* ultraviolet */
+  --ir: #ff5a36;      /* infrared, the hot accent */
+  --ok: #5cf2b4;
+  --bad: #ff3d5a;
+  --amber: #ffb547;
+  --f-display: "Archivo", "Arial Black", Impact, sans-serif;
+  --f-body: "Geist", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
-html.lenis, html.lenis body { height: auto; }
-.lenis.lenis-smooth { scroll-behavior: auto !important; }
-body { background: var(--ink); color: var(--ivory); font-family: var(--f-sans); font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
-body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 90; background: var(--ink); }
-::selection { background: var(--ember); color: var(--ink); }
-a { color: inherit; text-decoration: none; }
-h1, h2, h3, p { margin: 0; font-weight: 400; }
+body { background: var(--bg); color: var(--fg); font-family: var(--f-body); font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 60; background: var(--bg); }
+::selection { background: var(--ir); color: var(--bg); }
+a { color: inherit; }
+h1, h2, h3, p { margin: 0; }
 h1, h2, h3 { text-wrap: balance; }
-:focus-visible { outline: 1px solid var(--ember); outline-offset: 4px; }
-.wrap { max-width: 1320px; margin: 0 auto; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
-@media (min-width: 760px) { .wrap { padding-left: max(48px, env(safe-area-inset-left, 0px)); padding-right: max(48px, env(safe-area-inset-right, 0px)); } }
-.mono { font-family: var(--f-mono); font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--ivory-dim); }
-.serif { font-family: var(--f-serif); }
-em, .it { font-family: var(--f-serif); font-style: italic; }
-.ember { color: var(--ember); }
-.ch, .wd { display: inline-block; will-change: transform; }
+:focus-visible { outline: 2px solid var(--ir); outline-offset: 3px; }
+.wrap { max-width: 1240px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+@media (min-width: 760px) { .wrap { padding-left: max(40px, env(safe-area-inset-left, 0px)); padding-right: max(40px, env(safe-area-inset-right, 0px)); } }
+.mono { font-family: var(--f-mono); }
+.grad { background: linear-gradient(100deg, var(--uv), var(--ir)); -webkit-background-clip: text; background-clip: text; color: transparent; }
 
-/* grain + vignette */
-.grain { position: fixed; inset: -50%; z-index: 70; pointer-events: none; opacity: .07; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); animation: grain 1.2s steps(5) infinite; }
-@keyframes grain { 20% { transform: translate(-4%, 3%); } 40% { transform: translate(3%, -2%); } 60% { transform: translate(-2%, -4%); } 80% { transform: translate(4%, 2%); } }
+#gl { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; display: block; }
+.grain { position: fixed; inset: -50%; z-index: 1; pointer-events: none; opacity: .06; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); animation: grain 1s steps(4) infinite; }
+@keyframes grain { 25% { transform: translate(-3%, 2%); } 50% { transform: translate(2%, -3%); } 75% { transform: translate(-2%, -1%); } }
+main, header.nav, footer { position: relative; z-index: 2; }
 
-/* loader */
-#loader { position: fixed; inset: 0; z-index: 100; background: var(--ivory); color: var(--ink); display: flex; flex-direction: column; justify-content: space-between; padding: max(28px, env(safe-area-inset-top, 0px)) max(24px, env(safe-area-inset-right, 0px)) 28px max(24px, env(safe-area-inset-left, 0px)); }
-#loader .top { display: flex; justify-content: space-between; font-family: var(--f-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
-#loader .num { font-family: var(--f-serif); font-weight: 300; font-size: clamp(7rem, 26vw, 22rem); line-height: .8; letter-spacing: -.04em; text-align: right; font-variant-numeric: tabular-nums; }
-#loader .num i { font-style: italic; color: var(--ember); }
+/* ---------- loader ---------- */
+#loader { position: fixed; inset: 0; z-index: 100; background: var(--bg); display: grid; place-items: center; }
+#loader .in { font-family: var(--f-mono); font-size: 13px; color: var(--dim); display: grid; gap: 14px; width: min(320px, 80vw); }
+#loader .pct { font-family: var(--f-display); font-stretch: 125%; font-weight: 900; font-size: 72px; line-height: 1; color: var(--fg); font-variant-numeric: tabular-nums; }
+#loader .bar { height: 2px; background: var(--line); overflow: hidden; }
+#loader .bar i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--uv), var(--ir)); }
 
-/* cursor */
-.c-dot, .c-ring { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 95; border-radius: 50%; }
-.c-dot { width: 6px; height: 6px; margin: -3px 0 0 -3px; background: var(--ember); }
-.c-ring { width: 44px; height: 44px; margin: -22px 0 0 -22px; border: 1px solid rgba(239,233,223,.45); display: grid; place-items: center; transition: width .5s var(--ease), height .5s var(--ease), margin .5s var(--ease), background .4s, border-color .4s; }
-.c-ring span { font-family: var(--f-mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink); opacity: 0; transition: opacity .25s; }
-.c-ring.on { width: 96px; height: 96px; margin: -48px 0 0 -48px; background: var(--ember); border-color: var(--ember); }
-.c-ring.on span { opacity: 1; }
-@media (hover: none), (pointer: coarse) { .c-dot, .c-ring { display: none; } }
+/* ---------- cursor ---------- */
+.cur, .cur-dot { position: fixed; top: 0; left: 0; z-index: 90; pointer-events: none; border-radius: 50%; mix-blend-mode: difference; }
+.cur { width: 38px; height: 38px; margin: -19px 0 0 -19px; border: 1.5px solid #fff; transition: width .25s, height .25s, margin .25s, background .25s; }
+.cur.big { width: 84px; height: 84px; margin: -42px 0 0 -42px; background: #fff; }
+.cur-dot { width: 6px; height: 6px; margin: -3px 0 0 -3px; background: #fff; }
+@media (hover: none), (pointer: coarse) { .cur, .cur-dot { display: none; } }
 
-/* nav */
-header.nav { position: fixed; top: env(safe-area-inset-top, 0px); left: 0; right: 0; z-index: 60; mix-blend-mode: difference; color: #fff; }
-header.nav .wrap { height: 76px; display: flex; justify-content: space-between; align-items: center; gap: 20px; }
-.brand { font-family: var(--f-serif); font-size: 24px; letter-spacing: -.01em; }
-.brand i { font-style: italic; }
-header.nav nav { display: flex; gap: 30px; font-size: 14px; }
-.hl { position: relative; display: inline-block; overflow: hidden; vertical-align: top; }
-.hl span { display: block; transition: transform .6s var(--ease); }
-.hl span + span { position: absolute; left: 0; top: 100%; font-family: var(--f-serif); font-style: italic; font-size: 1.15em; line-height: 1.3; }
-.hl:hover span { transform: translateY(-100%); }
-@media (max-width: 760px) { header.nav nav { display: none; } }
+/* ---------- nav ---------- */
+header.nav { position: fixed; top: env(safe-area-inset-top, 0px); left: 0; right: 0; z-index: 50; mix-blend-mode: difference; }
+header.nav .wrap { display: flex; justify-content: space-between; align-items: center; height: 72px; gap: 16px; }
+.logo { font-family: var(--f-display); font-stretch: 125%; font-weight: 900; font-size: 18px; text-decoration: none; letter-spacing: -.02em; color: #fff; }
+header.nav nav { display: flex; gap: 26px; font-family: var(--f-mono); font-size: 12.5px; text-transform: uppercase; letter-spacing: .08em; }
+header.nav nav a { text-decoration: none; color: #fff; }
+.avail { font-family: var(--f-mono); font-size: 12px; color: #fff; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+.avail i { width: 8px; height: 8px; border-radius: 50%; background: #fff; animation: blink 1.4s infinite; }
+@keyframes blink { 50% { opacity: .2; } }
+@media (max-width: 820px) { header.nav nav { display: none; } }
 
-/* hero */
-.hero { min-height: 100svh; display: flex; flex-direction: column; justify-content: flex-end; padding-block: 120px 40px; position: relative; }
-.hero .wrap { width: 100%; }
-.hero h1 { font-family: var(--f-serif); font-weight: 300; font-size: clamp(3.4rem, 10.6vw, 11.6rem); line-height: .9; letter-spacing: -.035em; }
-.hero h1 .ln { display: block; overflow: hidden; padding-bottom: .08em; margin-bottom: -.08em; perspective: 600px; }
-.hero h1 .ln.r { text-align: right; }
-.hero h1 em { color: var(--ember); font-weight: 300; }
-.hero-meta { margin-top: 56px; display: grid; gap: 24px; align-items: end; border-top: 1px solid var(--line); padding-top: 22px; }
-@media (min-width: 900px) { .hero-meta { grid-template-columns: 1fr 1.4fr 1fr; } }
-.hero-meta p { color: var(--ivory-dim); max-width: 36ch; font-size: 15.5px; }
-.hero-meta .right { display: flex; justify-content: flex-start; gap: 10px; flex-wrap: wrap; }
-@media (min-width: 900px) { .hero-meta .right { justify-content: flex-end; } }
-.avail { display: inline-flex; align-items: center; gap: 10px; }
-.avail i { width: 7px; height: 7px; border-radius: 50%; background: var(--ember); box-shadow: 0 0 0 0 rgba(255,107,44,.6); animation: pulse 2.2s infinite; }
-@keyframes pulse { 70% { box-shadow: 0 0 0 10px rgba(255,107,44,0); } 100% { box-shadow: 0 0 0 0 rgba(255,107,44,0); } }
+/* ---------- hero ---------- */
+.hero { min-height: 100svh; display: flex; align-items: flex-end; padding-block: 120px 56px; }
+.hero .wrap { width: 100%; display: grid; gap: 28px; }
+.kicker { font-family: var(--f-mono); font-size: 13px; color: var(--dim); text-transform: uppercase; letter-spacing: .14em; display: flex; flex-wrap: wrap; gap: 6px 18px; }
+.kicker b { color: var(--ir); font-weight: 500; }
+.name { font-family: var(--f-display); font-weight: 900; font-stretch: 125%; text-transform: uppercase; font-size: clamp(3.4rem, 13.5vw, 13rem); line-height: .82; letter-spacing: -.045em; }
+.name .line { display: block; overflow: hidden; padding-bottom: .04em; }
+.name .ch { display: inline-block; will-change: transform; }
+.name .line:nth-child(2) { padding-left: 8vw; }
+.hero-foot { display: grid; gap: 24px; align-items: end; }
+@media (min-width: 900px) { .hero-foot { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); } }
+.thesis { font-size: clamp(1.25rem, 2.2vw, 1.75rem); line-height: 1.3; font-weight: 400; max-width: 30ch; letter-spacing: -.01em; }
+.thesis em { font-style: normal; }
+.hero-cta { display: flex; flex-wrap: wrap; gap: 12px; justify-content: flex-start; }
+@media (min-width: 900px) { .hero-cta { justify-content: flex-end; } }
+.scroll-hint { font-family: var(--f-mono); font-size: 11.5px; color: var(--dim); letter-spacing: .14em; text-transform: uppercase; display: flex; align-items: center; gap: 10px; }
+.scroll-hint i { width: 1px; height: 36px; background: linear-gradient(var(--fg), transparent); animation: drip 1.8s infinite; transform-origin: top; }
+@keyframes drip { 0% { transform: scaleY(0); } 50% { transform: scaleY(1); } 100% { transform: scaleY(1); opacity: 0; } }
 
-/* buttons */
-.btn { position: relative; display: inline-flex; align-items: center; gap: 10px; height: 50px; padding: 0 26px; border-radius: 999px; border: 1px solid var(--ivory-faint); font-size: 14.5px; color: var(--ivory); overflow: hidden; isolation: isolate; cursor: pointer; background: transparent; transition: color .55s var(--ease), border-color .55s var(--ease); }
-.btn::before { content: ""; position: absolute; left: 50%; top: 100%; width: 140%; aspect-ratio: 1; border-radius: 50%; background: var(--ivory); transform: translate(-50%, 0) scale(.2); transition: transform .7s var(--ease), top .7s var(--ease); z-index: -1; }
-.btn:hover { color: var(--ink); border-color: var(--ivory); }
-.btn:hover::before { top: -40%; transform: translate(-50%, 0) scale(1); }
-.btn.fill { background: var(--ember); border-color: var(--ember); color: var(--ink); font-weight: 500; }
-.btn .ar { transition: transform .5s var(--ease); }
-.btn:hover .ar { transform: rotate(45deg); }
+.btn { position: relative; display: inline-flex; align-items: center; gap: 10px; padding: 14px 22px; border-radius: 999px; font-family: var(--f-mono); font-size: 13px; text-decoration: none; cursor: pointer; border: 1px solid var(--line-2); background: rgba(255,255,255,.04); color: var(--fg); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); transition: background .3s, color .3s, border-color .3s; overflow: hidden; }
+.btn:hover { border-color: var(--fg); }
+.btn.hot { background: var(--fg); color: var(--bg); border-color: var(--fg); font-weight: 500; }
+.btn.hot:hover { background: var(--ir); border-color: var(--ir); color: var(--bg); }
 
-/* marquee */
-.marq { border-block: 1px solid var(--line); padding-block: 26px; overflow: hidden; }
-.mq { display: flex; width: max-content; will-change: transform; }
-.mq span { font-family: var(--f-serif); font-size: clamp(2.6rem, 6.4vw, 5.6rem); line-height: 1; letter-spacing: -.02em; white-space: nowrap; padding-right: .6em; }
-.mq span i { color: var(--ember); }
-.mq span b { font-weight: 300; color: var(--ivory-faint); }
+/* ---------- marquee ---------- */
+.marquee { border-block: 1px solid var(--line); padding-block: 22px; overflow: hidden; background: rgba(5,5,7,.55); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+.mq-track { display: flex; width: max-content; will-change: transform; }
+.mq-track span { font-family: var(--f-display); font-stretch: 125%; font-weight: 900; text-transform: uppercase; font-size: clamp(2.2rem, 6vw, 4.6rem); line-height: 1; letter-spacing: -.03em; padding-right: .5em; white-space: nowrap; }
+.mq-track span .o { color: transparent; -webkit-text-stroke: 1.5px var(--fg); }
+.mq-track span .s { color: var(--ir); }
 
-/* statement */
-.statement { padding-block: 22vh; }
-.statement .mono { margin-bottom: 36px; display: block; }
-.statement p { font-family: var(--f-serif); font-weight: 300; font-size: clamp(2rem, 4.6vw, 4.4rem); line-height: 1.08; letter-spacing: -.02em; max-width: 22ch; }
-.statement p .wd { color: var(--ivory-faint); transition: color .2s; }
-.statement p .wd.lit { color: var(--ivory); }
-.statement p .wd.em { font-style: italic; }
-.statement p .wd.em.lit { color: var(--ember); }
+/* ---------- metrics ---------- */
+.metrics { padding-block: 100px 40px; }
+.m-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+@media (min-width: 900px) { .m-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.m { padding: 26px 22px; border: 1px solid var(--line); border-radius: 20px; background: var(--glass); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); min-width: 0; }
+.m .v { font-family: var(--f-display); font-stretch: 125%; font-weight: 900; font-size: clamp(2.4rem, 5vw, 3.8rem); line-height: 1; letter-spacing: -.04em; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.m .v small { font-size: .45em; color: var(--dim); letter-spacing: 0; }
+.m .v .from { color: var(--faint); font-size: .55em; letter-spacing: -.02em; }
+.m p { margin-top: 10px; color: var(--dim); font-size: 13.5px; line-height: 1.5; }
 
-/* horizontal work */
-.hsec { position: relative; overflow: hidden; }
-.htrack { display: flex; flex-direction: column; }
-.panel { min-width: 0; padding-block: 72px; border-top: 1px solid var(--line); }
-.panel .inner { padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
-.intro-panel .big { font-family: var(--f-serif); font-weight: 300; font-size: clamp(3.6rem, 12vw, 12rem); line-height: .86; letter-spacing: -.04em; }
-.intro-panel .big em { color: var(--ember); }
-.intro-panel p { margin-top: 28px; max-width: 34ch; color: var(--ivory-dim); }
-.intro-panel .hint { margin-top: 40px; display: inline-flex; align-items: center; gap: 14px; }
-.intro-panel .hint i { display: inline-block; width: 56px; height: 1px; background: var(--ivory-dim); position: relative; overflow: hidden; }
-.intro-panel .hint i::after { content: ""; position: absolute; inset: 0; background: var(--ember); transform: translateX(-100%); animation: slide 1.8s var(--ease) infinite; }
-@keyframes slide { 60%, 100% { transform: translateX(100%); } }
-@media (min-width: 900px) {
-  .hsec { height: 100vh; }
-  .htrack { flex-direction: row; height: 100%; width: max-content; }
-  .panel { height: 100%; display: flex; align-items: center; padding-block: 90px 50px; border-top: 0; border-left: 1px solid var(--line); }
-  .panel .inner { padding-inline: 5vw; }
-  .intro-panel { width: 62vw; border-left: 0; }
-  .proj-panel { width: min(1240px, 92vw); }
-}
-.proj { display: grid; gap: 32px; align-items: center; }
-@media (min-width: 900px) { .proj { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 5vw; } }
-.p-idx { display: flex; gap: 16px; align-items: baseline; margin-bottom: 18px; }
-.p-idx .n { font-family: var(--f-serif); font-style: italic; font-size: 22px; color: var(--ember); }
-.p-name { font-family: var(--f-serif); font-weight: 300; font-size: clamp(3.4rem, 7.4vw, 7.4rem); line-height: .88; letter-spacing: -.04em; cursor: default; }
-.p-name { overflow: hidden; padding-bottom: .06em; margin-bottom: -.06em; }
-.p-tag { margin-top: 18px; font-size: 18px; color: var(--ivory-dim); max-width: 34ch; line-height: 1.45; }
-.p-pts { list-style: none; padding: 0; margin: 28px 0 0; display: grid; gap: 0; border-top: 1px solid var(--line); }
-.p-pts li { display: grid; grid-template-columns: 28px minmax(0, 1fr); padding: 13px 0; border-bottom: 1px solid var(--line); font-size: 14.5px; line-height: 1.55; color: #d8d1c5; }
-.p-pts li::before { content: "—"; color: var(--ember); }
-.p-pts b { color: var(--ivory); font-weight: 500; }
-.p-links { margin-top: 26px; display: flex; gap: 10px; flex-wrap: wrap; }
+/* ---------- project chapters ---------- */
+.chapter { min-height: 140svh; padding-block: 18vh 10vh; }
+.chapter .wrap { display: grid; }
+.ch-card { max-width: 600px; display: grid; gap: 22px; }
+.ch-num { font-family: var(--f-display); font-stretch: 125%; font-weight: 900; font-size: clamp(5rem, 14vw, 10rem); line-height: .8; letter-spacing: -.05em; color: transparent; -webkit-text-stroke: 1.5px var(--line-2); }
+.ch-tag { display: inline-flex; gap: 8px; flex-wrap: wrap; }
+.pill { font-family: var(--f-mono); font-size: 11.5px; letter-spacing: .06em; padding: 5px 11px; border-radius: 999px; border: 1px solid var(--line-2); color: var(--dim); background: rgba(5,5,7,.5); }
+.pill.hot { background: var(--ir); border-color: var(--ir); color: var(--bg); font-weight: 500; }
+.ch-title { font-family: var(--f-display); font-stretch: 125%; font-weight: 900; text-transform: uppercase; font-size: clamp(3rem, 9vw, 7.2rem); line-height: .85; letter-spacing: -.05em; }
+.ch-sub { font-size: clamp(1.1rem, 1.8vw, 1.35rem); color: var(--dim); max-width: 34ch; line-height: 1.4; }
+.glass { border: 1px solid var(--line); border-radius: 24px; background: var(--glass); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); padding: 22px; min-width: 0; }
+.pts { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+.pts li { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 10px; font-size: 15px; line-height: 1.55; color: #dcd8ec; }
+.pts li::before { content: ""; width: 8px; height: 8px; margin-top: 8px; border-radius: 2px; background: linear-gradient(135deg, var(--uv), var(--ir)); }
+.pts strong { color: var(--fg); font-weight: 600; }
+.links { display: flex; flex-wrap: wrap; gap: 10px; }
 
-/* reveal card (ivory on black) */
-.card { position: relative; border-radius: 26px; overflow: hidden; background: var(--ivory); color: var(--ink); clip-path: inset(0 0 0 0 round 26px); will-change: clip-path; }
-.card .ci { position: relative; z-index: 1; padding: 30px 30px 26px; will-change: transform; }
-.card .ct { display: flex; justify-content: space-between; gap: 12px; font-family: var(--f-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: #6c655b; }
-.card .hero-n { margin-top: 26px; font-family: var(--f-serif); font-weight: 300; font-size: clamp(4.4rem, 8.8vw, 8.4rem); line-height: .85; letter-spacing: -.05em; font-variant-numeric: tabular-nums; }
-.card .hero-n small { font-size: .38em; letter-spacing: 0; }
-.card .hero-n .was { font-size: .3em; color: #9a9184; text-decoration: line-through; text-decoration-thickness: 1px; margin-right: 10px; vertical-align: .9em; letter-spacing: 0; }
-.card .cap { margin-top: 8px; font-size: 14px; color: #4b453d; max-width: 30ch; }
-.card .row { margin-top: 26px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1px solid #d6cfc3; }
-.card .row div { padding: 16px 0 4px; min-width: 0; }
-.card .row div + div { padding-left: 18px; border-left: 1px solid #d6cfc3; }
-.card .row strong { display: block; font-family: var(--f-serif); font-weight: 400; font-size: 2.3rem; line-height: 1; letter-spacing: -.03em; }
-.card .row span:not(.cnt) { display: block; margin-top: 6px; font-size: 12.5px; color: #6c655b; line-height: 1.4; }
-.card .acc { position: absolute; z-index: 0; right: -70px; bottom: -70px; width: 170px; height: 170px; border-radius: 50%; background: var(--ember); opacity: .9; filter: blur(.5px); }
-.flow { margin-top: 26px; display: grid; gap: 8px; }
-.flow .st { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border: 1px solid #d6cfc3; border-radius: 14px; font-family: var(--f-mono); font-size: 12px; letter-spacing: .04em; }
-.flow .st b { font-family: var(--f-serif); font-weight: 400; font-style: italic; font-size: 18px; letter-spacing: 0; }
-.flow .split { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.flow .st.go { background: var(--ink); color: var(--ivory); border-color: var(--ink); }
-.flow .st.go b { color: var(--ember); }
+/* tilt card */
+.tilt { transform-style: preserve-3d; transition: transform .2s ease-out; position: relative; }
+.tilt .glare { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; background: radial-gradient(400px circle at var(--gx, 50%) var(--gy, 0%), rgba(255,255,255,.10), transparent 40%); }
 
-/* stack list */
-.sec { padding-block: 18vh 12vh; }
-.sec-h { display: flex; justify-content: space-between; align-items: end; gap: 20px; flex-wrap: wrap; margin-bottom: 56px; }
-.sec-h h2 { font-family: var(--f-serif); font-weight: 300; font-size: clamp(3rem, 8vw, 7.6rem); line-height: .88; letter-spacing: -.04em; }
-.sec-h h2 em { color: var(--ember); }
-.sec-h h2 .ln { display: block; overflow: hidden; padding-bottom: .08em; }
-.rows { border-top: 1px solid var(--line); }
-.rw { position: relative; display: grid; grid-template-columns: 1fr; gap: 6px 24px; padding: 26px 0; border-bottom: 1px solid var(--line); overflow: hidden; isolation: isolate; }
-@media (min-width: 900px) { .rw { grid-template-columns: 260px minmax(0, 1fr) auto; align-items: baseline; } }
-.rw::before { content: ""; position: absolute; inset: 0; background: var(--ivory); transform: scaleY(0); transform-origin: bottom; transition: transform .6s var(--ease); z-index: -1; }
-.rw:hover::before { transform: scaleY(1); }
-.rw:hover { color: var(--ink); }
-.rw:hover .mono, .rw:hover .dim { color: #6c655b; }
-.rw .t { font-family: var(--f-serif); font-size: clamp(1.7rem, 3vw, 2.6rem); line-height: 1.05; letter-spacing: -.02em; transition: transform .6s var(--ease); }
-.rw:hover .t { transform: translateX(14px); }
-.rw .d { color: #d8d1c5; font-size: 15.5px; transition: color .4s; }
-.rw:hover .d { color: var(--ink); }
-.rw .dim { color: var(--ivory-dim); font-size: 14px; white-space: nowrap; }
+/* HUD: key ring */
+.hud-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; font-family: var(--f-mono); font-size: 12px; color: var(--dim); margin-bottom: 16px; }
+.hud-head b { color: var(--fg); font-weight: 500; }
+.models { display: grid; gap: 8px; margin-bottom: 16px; }
+.mrow { display: grid; grid-template-columns: 12px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); background: rgba(255,255,255,.02); transition: border-color .25s, background .25s; }
+.mrow .st { width: 10px; height: 10px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 12px var(--ok); transition: all .25s; }
+.mrow b { display: block; font-family: var(--f-mono); font-weight: 500; font-size: 13px; }
+.mrow small { font-family: var(--f-mono); font-size: 11px; color: var(--faint); }
+.mrow.try { border-color: var(--amber); background: color-mix(in srgb, var(--amber) 8%, transparent); }
+.mrow.try .st { background: var(--amber); box-shadow: 0 0 12px var(--amber); }
+.mrow.serve { border-color: var(--ok); background: color-mix(in srgb, var(--ok) 8%, transparent); }
+.mrow.down .st { background: var(--bad); box-shadow: 0 0 12px var(--bad); }
+.mrow.down b { color: var(--dim); text-decoration: line-through; }
+.kill { font-family: var(--f-mono); font-size: 11.5px; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line-2); background: transparent; color: var(--dim); cursor: pointer; }
+.kill:hover { border-color: var(--bad); color: var(--bad); }
+.kill[aria-pressed="true"] { background: var(--bad); border-color: var(--bad); color: var(--bg); }
+.stream { margin-top: 14px; min-height: 64px; padding: 12px 14px; border-radius: 14px; border: 1px dashed var(--line-2); font-size: 14.5px; line-height: 1.55; color: var(--fg); }
+.stream .ph { color: var(--faint); font-family: var(--f-mono); font-size: 12px; }
+.stream .src { color: var(--uv); font-family: var(--f-mono); font-size: 12px; }
+.stream .caret { display: inline-block; width: 7px; height: 1em; background: var(--ir); vertical-align: -2px; margin-left: 2px; animation: blink 1s steps(1) infinite; }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; font-family: var(--f-mono); font-size: 11.5px; color: var(--dim); }
+.legend i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+#clf[aria-pressed="true"] { border-color: var(--ok); color: var(--ok); }
+#clf[aria-pressed="false"], #outage[aria-pressed="true"] { border-color: var(--bad); color: var(--bad); }
+.how { display: grid; gap: 8px; margin-top: 16px; }
+.how div { display: grid; grid-template-columns: 22px minmax(0,1fr); gap: 8px; font-size: 13.5px; color: #dcd8ec; }
+.how b { font-family: var(--f-mono); font-size: 11px; color: var(--ok); font-weight: 500; padding-top: 2px; }
+.hud-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.big-n { font-family: var(--f-display); font-stretch: 125%; font-weight: 900; font-size: 2.6rem; line-height: 1; font-variant-numeric: tabular-nums; letter-spacing: -.03em; }
+.route { font-family: var(--f-mono); font-size: 12.5px; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--ok); color: var(--ok); transition: color .3s, border-color .3s; }
+.route.fb { color: var(--ir); border-color: var(--ir); }
+.ctl { font-family: var(--f-mono); font-size: 12.5px; padding: 10px 16px; border-radius: 999px; border: 1px solid var(--line-2); background: rgba(255,255,255,.05); color: var(--fg); cursor: pointer; transition: background .25s, color .25s, border-color .25s; }
+.ctl:hover { border-color: var(--fg); }
+.ctl.fire { border-color: var(--ir); color: var(--ir); }
+.ctl.fire:hover { background: var(--ir); color: var(--bg); }
+.ctl:disabled { opacity: .5; cursor: progress; }
+.log { margin-top: 14px; font-family: var(--f-mono); font-size: 12px; line-height: 1.75; color: var(--dim); height: 128px; overflow-y: auto; border-top: 1px solid var(--line); padding-top: 10px; }
+.log .t { color: var(--faint); }
+.log .r { color: var(--bad); } .log .g { color: var(--ok); } .log .o { color: var(--ir); } .log .u { color: var(--uv); }
 
-/* contact */
-.contact { min-height: 100svh; display: flex; flex-direction: column; justify-content: center; padding-block: 16vh 0; }
-.contact .mono { display: block; margin-bottom: 30px; }
-.contact h2 { font-family: var(--f-serif); font-weight: 300; font-size: clamp(4rem, 15vw, 15rem); line-height: .82; letter-spacing: -.05em; }
-.contact h2 .ln { display: block; overflow: hidden; padding-bottom: .06em; }
-.contact h2 em { color: var(--ember); }
-.c-row { margin-top: 64px; display: flex; flex-wrap: wrap; gap: 28px 40px; align-items: center; }
-.orb { width: 168px; height: 168px; border-radius: 50%; background: var(--ember); color: var(--ink); display: grid; place-items: center; text-align: center; font-size: 15px; font-weight: 500; border: 0; cursor: pointer; transition: transform .5s var(--ease); line-height: 1.3; font-family: var(--f-sans); }
-.orb:hover { transform: scale(1.06); }
-.mail { font-family: var(--f-serif); font-size: clamp(1.6rem, 3.6vw, 3rem); letter-spacing: -.02em; user-select: all; overflow-wrap: anywhere; min-width: 0; border-bottom: 1px solid var(--ivory-faint); padding-bottom: 4px; }
-.socials { display: flex; gap: 22px; font-size: 15px; }
-footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; padding-block: 30px; border-top: 1px solid var(--line); margin-top: 14vh; }
+/* faithfulness bars */
+.bars { display: grid; gap: 12px; }
+.bar { display: grid; grid-template-columns: 120px minmax(0, 1fr) 48px; gap: 12px; align-items: center; font-family: var(--f-mono); font-size: 12px; color: var(--dim); }
+.bar .tr { display: block; height: 10px; border-radius: 99px; background: rgba(255,255,255,.07); overflow: hidden; }
+.bar .fl { display: block; height: 100%; width: var(--w); border-radius: 99px; background: linear-gradient(90deg, var(--uv), var(--ir)); }
+.bar .fl.lo { background: var(--faint); }
+.bar strong { text-align: right; color: var(--fg); font-variant-numeric: tabular-nums; }
+@media (max-width: 420px) { .bar { grid-template-columns: 92px minmax(0, 1fr) 40px; } }
+
+/* cache dots */
+.dots { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 8px; margin-bottom: 16px; }
+.cd { aspect-ratio: 1; border-radius: 12px; display: grid; place-items: center; font-family: var(--f-mono); font-size: 10px; font-weight: 500; background: linear-gradient(135deg, var(--uv), var(--ir)); color: var(--bg); transition: all .4s cubic-bezier(.2,.8,.2,1); }
+.cd.hit { background: transparent; color: var(--faint); outline: 1px dashed var(--faint); outline-offset: -1px; transform: scale(.82) rotate(-8deg); }
+#cache-btn[aria-pressed="true"] { border-color: var(--ok); color: var(--ok); }
+
+/* agent */
+.graph { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin-bottom: 6px; }
+.outs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 16px; }
+.nd { font-family: var(--f-mono); font-size: clamp(10px, 2.6vw, 11.5px); text-align: center; padding: 11px 4px; border-radius: 12px; border: 1px solid var(--line-2); color: var(--dim); transition: all .25s; overflow-wrap: anywhere; min-width: 0; }
+.nd.on { border-color: var(--uv); color: var(--fg); background: color-mix(in srgb, var(--uv) 30%, transparent); box-shadow: 0 0 24px color-mix(in srgb, var(--uv) 50%, transparent); }
+.nd.ok { border-color: var(--ok); color: var(--ok); }
+.nd.no { border-color: var(--bad); color: var(--bad); }
+.nd.win { background: var(--ok); color: var(--bg); border-color: var(--ok); box-shadow: 0 0 30px color-mix(in srgb, var(--ok) 50%, transparent); }
+.nd.esc { background: var(--ir); color: var(--bg); border-color: var(--ir); box-shadow: 0 0 30px color-mix(in srgb, var(--ir) 50%, transparent); }
+.sl { display: grid; gap: 14px; margin-bottom: 14px; }
+@media (min-width: 520px) { .sl { grid-template-columns: 1fr 1fr; } }
+.sl label { display: flex; justify-content: space-between; font-family: var(--f-mono); font-size: 12px; color: var(--dim); margin-bottom: 6px; }
+.sl output { color: var(--fg); }
+input[type=range] { width: 100%; accent-color: var(--ir); }
+
+/* ---------- stack ---------- */
+.stack { padding-block: 16vh 10vh; }
+.sec-title { font-family: var(--f-display); font-stretch: 125%; font-weight: 900; text-transform: uppercase; font-size: clamp(3rem, 10vw, 8rem); line-height: .85; letter-spacing: -.05em; margin-bottom: 40px; }
+.chips-row { overflow: hidden; padding-block: 8px; }
+.chips-track { display: flex; gap: 12px; width: max-content; }
+.chip { font-size: clamp(1.1rem, 2.4vw, 1.7rem); padding: 14px 26px; border-radius: 999px; border: 1px solid var(--line-2); background: var(--glass); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); white-space: nowrap; }
+.chip small { font-family: var(--f-mono); font-size: 11px; color: var(--ir); margin-right: 10px; letter-spacing: .08em; text-transform: uppercase; vertical-align: 3px; }
+
+/* ---------- education ---------- */
+.edu { padding-block: 10vh; }
+.edu-list { display: grid; gap: 12px; }
+.edu-item { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 24px; align-items: center; }
+.edu-item h3 { font-size: clamp(1.15rem, 2.4vw, 1.6rem); font-weight: 600; letter-spacing: -.01em; }
+.edu-item p { color: var(--dim); font-size: 14px; }
+.edu-item .when { font-family: var(--f-mono); font-size: 13px; color: var(--ir); white-space: nowrap; }
+@media (max-width: 560px) { .edu-item { grid-template-columns: 1fr; } }
+
+/* ---------- contact ---------- */
+.contact { min-height: 100svh; display: flex; align-items: center; padding-block: 14vh; }
+.contact .wrap { width: 100%; }
+.cta-big { font-family: var(--f-display); font-stretch: 125%; font-weight: 900; text-transform: uppercase; font-size: clamp(3.2rem, 13vw, 12rem); line-height: .82; letter-spacing: -.05em; }
+.cta-big .row { display: block; }
+.cta-big .fill { position: relative; color: transparent; -webkit-text-stroke: 1.5px var(--fg); display: inline-block; }
+.cta-big .fill::after { content: attr(data-t); position: absolute; inset: 0; color: var(--ir); -webkit-text-stroke: 0; clip-path: inset(0 100% 0 0); transition: clip-path .8s cubic-bezier(.7,0,.2,1); }
+.cta-big:hover .fill::after, .cta-big .fill.lit::after { clip-path: inset(0 0 0 0); }
+.contact p.lead { margin-top: 28px; color: var(--dim); max-width: 50ch; font-size: 17px; }
+.mailrow { margin-top: 34px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.mail { font-family: var(--f-mono); font-size: clamp(14px, 2.4vw, 19px); padding: 14px 22px; border-radius: 999px; border: 1px solid var(--line-2); background: var(--glass); user-select: all; overflow-wrap: anywhere; min-width: 0; }
+footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; padding-block: 26px; font-family: var(--f-mono); font-size: 12px; color: var(--faint); border-top: 1px solid var(--line); }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
@@ -203,367 +236,540 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
 </style>
 </head><body>
 
+<canvas id="gl" aria-hidden="true"></canvas>
 <div class="grain" aria-hidden="true"></div>
-<div class="c-dot" aria-hidden="true"></div><div class="c-ring" aria-hidden="true"><span>open</span></div>
+<div class="cur" aria-hidden="true"></div><div class="cur-dot" aria-hidden="true"></div>
 
 <div id="loader" aria-hidden="true">
-  <div class="top"><span>Vaidik Dave</span><span id="ld-msg">Applied AI</span></div>
-  <div class="num"><span id="ld">0</span><i>%</i></div>
+  <div class="in">
+    <span>loading weights · vaidik.dave</span>
+    <span class="pct" id="pct">0</span>
+    <span class="bar"><i id="pbar"></i></span>
+    <span id="ltxt">init model router</span>
+  </div>
 </div>
 
 <header class="nav">
   <div class="wrap">
-    <a class="brand" href="#top">Vaidik <i>Dave</i></a>
+    <a class="logo" href="#top">VD/</a>
     <nav aria-label="Sections">
-      <a class="hl" href="#work"><span>Work</span><span>Work</span></a>
-      <a class="hl" href="#stack"><span>Stack</span><span>Stack</span></a>
-      <a class="hl" href="#contact"><span>Contact</span><span>Contact</span></a>
+      <a href="#auvon">Auvon</a><a href="#docmind">DocMind</a><a href="#recoup">Recoup</a><a href="#stack">Stack</a><a href="#contact">Contact</a>
     </nav>
+    <span class="avail"><i></i>open to work · <span id="clock">IST</span></span>
   </div>
 </header>
 
 <main id="top">
-  <section class="hero">
+  <!-- HERO -->
+  <section class="hero" data-morph="0" data-gx="1.4">
     <div class="wrap">
-      <h1 aria-label="I build the systems underneath language models.">
-        <span class="ln sp" aria-hidden="true">I build the</span>
-        <span class="ln r sp" aria-hidden="true">systems <em>underneath</em></span>
-        <span class="ln sp" aria-hidden="true">language models.</span>
-      </h1>
-      <div class="hero-meta">
-        <span class="mono avail"><i></i>Open to Applied AI roles · <span id="clock">IST</span></span>
-        <p class="fade">Applied AI and GenAI backend engineer from India. Routing, retrieval, evaluation and agents, designed, shipped and measured end to end.</p>
-        <div class="right fade">
-          <a class="btn fill mag" href="#work" data-c="view">See work <span class="ar">↘</span></a>
-          <a class="btn mag" href="https://github.com/Vaidik-Dave23" target="_blank" rel="noopener" data-c="open">GitHub <span class="ar">↗</span></a>
+      <p class="kicker"><span><b>●</b> Applied AI Engineer</span><span>GenAI Backend</span><span>LLM Infra</span><span>India</span></p>
+      <h1 class="name" aria-label="Vaidik Dave"><span class="line" aria-hidden="true">Vaidik</span><span class="line grad-line" aria-hidden="true">Dave</span></h1>
+      <div class="hero-foot">
+        <p class="thesis">I build what runs underneath language models. <em class="grad">Routing, retrieval,</em> and the failure handling that keeps both online.</p>
+        <div class="hero-cta">
+          <a class="btn hot mag" href="#auvon">See the work ↓</a>
+          <a class="btn mag" href="https://github.com/Vaidik-Dave23" target="_blank" rel="noopener">GitHub ↗</a>
+          <a class="btn mag" href="https://www.linkedin.com/in/vaidik-dave-0457873ab" target="_blank" rel="noopener">LinkedIn ↗</a>
         </div>
       </div>
+      <span class="scroll-hint"><i></i>scroll · the model reshapes per project</span>
     </div>
   </section>
 
-  <div class="marq" aria-hidden="true">
-    <div class="mq" id="mq">
-      <span>Model routing <b>✳</b> <i>grounded</i> retrieval <b>✳</b> evaluation <b>✳</b> <i>agents</i> that know when to stop <b>✳</b></span>
-      <span>Model routing <b>✳</b> <i>grounded</i> retrieval <b>✳</b> evaluation <b>✳</b> <i>agents</i> that know when to stop <b>✳</b></span>
+  <!-- MARQUEE -->
+  <div class="marquee" aria-hidden="true">
+    <div class="mq-track" id="mq">
+      <span>Routing <b class="s">✦</b> <b class="o">Retrieval</b> <b class="s">✦</b> Evaluation <b class="s">✦</b> <b class="o">Failover</b> <b class="s">✦</b> Agents <b class="s">✦</b> <b class="o">Observability</b> <b class="s">✦</b></span>
+      <span>Routing <b class="s">✦</b> <b class="o">Retrieval</b> <b class="s">✦</b> Evaluation <b class="s">✦</b> <b class="o">Failover</b> <b class="s">✦</b> Agents <b class="s">✦</b> <b class="o">Observability</b> <b class="s">✦</b></span>
     </div>
   </div>
 
-  <section class="statement">
+  <!-- METRICS -->
+  <section class="metrics" data-morph="0" data-gx="0">
     <div class="wrap">
-      <span class="mono">( The work )</span>
-      <p id="stmt">Most AI demos break the first time a provider fails, a document gets messy, or the model is unsure. I build the <em>parts that hold up.</em> And then I measure them.</p>
+      <div class="m-grid">
+        <div class="m rise"><div class="v"><span class="from">69.4→</span><span class="grad">77.8</span><small>%</small></div><p>Retrieval Hit@3 on Auvon: structure-aware chunker vs fixed-size</p></div>
+        <div class="m rise"><div class="v"><span data-count="97">97</span><small>.2%</small></div><p>Answer correctness vs reference on Auvon's fixed benchmark, 36 answerable questions</p></div>
+        <div class="m rise"><div class="v"><span class="from">29.5→</span><span class="grad">1.0</span><small>s</small></div><p>Time to first text on note generation after moving to streaming</p></div>
+        <div class="m rise"><div class="v"><span data-count="78">78</span><small> tests</small></div><p>Gating every deploy to Azure through GitHub Actions</p></div>
+      </div>
     </div>
   </section>
 
-  <section class="hsec" id="work" data-c="scroll">
-    <div class="htrack" id="htrack">
-      <div class="panel intro-panel">
-        <div class="inner">
-          <span class="mono">( Selected work · 03 )</span>
-          <h2 class="big" style="margin-top:24px">Three<br>systems, <em>solo.</em></h2>
-          <p>In the order I'd want a hiring manager to read them.</p>
-          <span class="mono hint">Keep scrolling <i></i></span>
-        </div>
-      </div>
+  <!-- 01 AUVON -->
+  <section class="chapter" id="auvon" data-morph="1" data-gx="2.5">
+    <div class="wrap">
+      <div class="ch-card">
+        <span class="ch-num rise">01</span>
+        <span class="ch-tag rise"><span class="pill hot">Flagship</span><span class="pill">Live on Azure</span><span class="pill">Real users</span></span>
+        <h2 class="ch-title scr" data-text="Auvon.ai">Auvon.ai</h2>
+        <p class="ch-sub rise">An AI study workspace. Notes from a topic, PDF or YouTube lecture, document Q&amp;A that cites its sources, a chat and voice tutor, adaptive tests and study roadmaps.</p>
 
-      <!-- AUVON -->
-      <div class="panel proj-panel">
-        <div class="inner proj">
-          <div>
-            <div class="p-idx"><span class="n">01</span><span class="mono">Flagship · Live on Azure</span></div>
-            <h3 class="p-name sp-h">Auvon.ai</h3>
-            <p class="p-tag">An AI study workspace with cited answers, a voice tutor, and a three-pass model router underneath.</p>
-            <ul class="p-pts">
-              <li><span><b>Model router</b>: Gemini 3.5 Flash, then 2.5 Flash, then gpt-4o-mini. Failover only before the first token, a 502 with the last error if all fail.</span></li>
-              <li><span><b>Quota-aware errors</b>: 429s read from the QuotaFailure quotaId, which fixed a false-blacklisting bug.</span></li>
-              <li><span><b>Grounded RAG</b> with a [Source N] citation on every claim. 78 tests gate every deploy.</span></li>
-            </ul>
-            <div class="p-links">
-              <a class="btn fill mag" href="https://auvon-ai.vercel.app/" target="_blank" rel="noopener" data-c="open">Live <span class="ar">↗</span></a>
-              <a class="btn mag" href="https://www.youtube.com/watch?v=wYbqiBTeo_8" target="_blank" rel="noopener" data-c="play">Demo <span class="ar">↗</span></a>
-              <a class="btn mag" href="https://github.com/Vaidik-Dave23/Auvon.ai" target="_blank" rel="noopener" data-c="code">Code <span class="ar">↗</span></a>
-            </div>
+        <div class="glass tilt rise">
+          <div class="glare"></div>
+          <div class="hud-head"><span><b>model.router</b> · the 3 clusters are the 3 passes</span><span class="pill">live sim</span></div>
+          <div class="models" id="models">
+            <div class="mrow" data-i="0"><span class="st"></span><span><b>gemini-3.5-flash</b><small>pass 1 · primary</small></span><button class="kill" type="button" aria-pressed="false">kill</button></div>
+            <div class="mrow" data-i="1"><span class="st"></span><span><b>gemini-2.5-flash</b><small>pass 2 · second model</small></span><button class="kill" type="button" aria-pressed="false">kill</button></div>
+            <div class="mrow" data-i="2"><span class="st"></span><span><b>gpt-4o-mini</b><small>pass 3 · cross-provider safety net</small></span><button class="kill" type="button" aria-pressed="false">kill</button></div>
           </div>
-          <div class="card">
-            <div class="ci">
-              <div class="ct"><span>Benchmark · 2026-11-05</span><span>Retrieval Hit@3</span></div>
-              <div class="hero-n"><span class="was">69.4</span><span class="cnt" data-to="77.8" data-dec="1">77.8</span><small>%</small></div>
-              <p class="cap">Structure-aware chunking vs fixed-size, same size and overlap.</p>
-              <div class="row">
-                <div><strong><span class="cnt" data-to="97.2" data-dec="1">97.2</span>%</strong><span>answer correctness vs reference</span></div>
-                <div><strong>1.0s</strong><span>first text, down from 29.5s with SSE streaming</span></div>
-              </div>
-            </div>
-            <span class="acc" aria-hidden="true"></span>
+          <div class="hud-row">
+            <button class="ctl fire" id="send" type="button">▶ Send a question</button>
+            <span class="route" id="route">idle</span>
           </div>
+          <div class="stream" id="stream"><span class="ph">kill a model or two, then send. failover happens before the first token, so the reader never sees it.</span></div>
+          <div class="log" id="klog" aria-live="polite"><div><span class="t">idle</span> 3 passes healthy</div></div>
         </div>
-      </div>
 
-      <!-- DOCMIND -->
-      <div class="panel proj-panel">
-        <div class="inner proj">
-          <div>
-            <div class="p-idx"><span class="n">02</span><span class="mono">RAG benchmarking</span></div>
-            <h3 class="p-name sp-h">DocMind</h3>
-            <p class="p-tag">Multi-document RAG and the harness that measures it, on a dense 502-page legal judgment.</p>
-            <ul class="p-pts">
-              <li><span><b>4 chunking strategies</b> benchmarked. Naive fixed-size beat semantic and hierarchical on context precision.</span></li>
-              <li><span><b>RAGAS-style evaluator</b>: batched judge prompts, local MiniLM similarity, SHA-256 score cache.</span></li>
-              <li><span><b>Embeddings cached at upload</b>, which fixed a major latency issue in compare mode.</span></li>
-            </ul>
-            <div class="p-links">
-              <a class="btn fill mag" href="https://github.com/Vaidik-Dave23/Multi-DOC-RAG" target="_blank" rel="noopener" data-c="code">Code <span class="ar">↗</span></a>
-            </div>
+        <ul class="pts glass rise">
+          <li><span>One <strong>provider-agnostic model router</strong> behind every call: Gemini 3.5 Flash, then Gemini 2.5 Flash, then OpenAI gpt-4o-mini. Latency-sensitive paths like streaming and live voice start on 2.5 Flash with thinking off. If every provider fails, it returns a 502 with the last error instead of hanging.</span></li>
+          <li><span><strong>Quota-aware error handling</strong>: 429s are classified from the <strong>QuotaFailure quotaId</strong>, so a per-minute limit moves on immediately and only real per-day exhaustion is parked until UTC midnight. This fixed a false-blacklisting bug that was taking usable capacity offline. Timeouts are never retried on the same slow path.</span></li>
+          <li><span><strong>Streaming over SSE</strong> for notes, document Q&amp;A and the tutor. Failover switches provider only before the first token, so text on screen is never restarted. First text in <strong>1.0 s</strong> instead of 29.5 s.</span></li>
+          <li><span><strong>Grounded RAG</strong>: a structure-aware chunker (headings, then paragraphs, then sentences, each chunk prefixed with its heading), gemini-embedding-001, in-memory cosine ranking in 30 ms, a <strong>[Source N]</strong> citation on every claim and a fixed refusal line. 11 of 12 unanswerable questions refused.</span></li>
+          <li><span><strong>Voice tutor</strong> that teaches in parts with a whiteboard, prefetching the next part while the current one plays, and re-explains a doubt a different way each time. Speech runs in the browser, so voice adds no API cost.</span></li>
+          <li><span>Production hygiene: rotating refresh tokens with <strong>token_version</strong> revocation, email verification, SlowAPI rate limits, ownership checks, Prometheus and OpenTelemetry. <strong>78 tests</strong> gate an OIDC deploy to Azure App Service, and trimming dependencies took the install from 732 MB to 150 MB.</span></li>
+        </ul>
+
+        <div class="glass rise">
+          <div class="hud-head"><span><b>eval</b> · how faithfulness got here</span><span class="pill">in-app judge</span></div>
+          <div class="bars">
+            <div class="bar"><span>v1 nano, fixed</span><span class="tr"><span class="fl lo" style="--w:14.3%"></span></span><strong>14.3%</strong></div>
+            <div class="bar"><span>v2 2.5 flash</span><span class="tr"><span class="fl" style="--w:66.2%;opacity:.6"></span></span><strong>66.2%</strong></div>
+            <div class="bar"><span>v3 + chunker</span><span class="tr"><span class="fl" style="--w:81.1%"></span></span><strong>81.1%</strong></div>
           </div>
-          <div class="card">
-            <div class="ci">
-              <div class="ct"><span>Evaluator</span><span>LLM calls / query</span></div>
-              <div class="hero-n"><span class="was">8</span><span class="cnt" data-to="2" data-dec="0">2</span><small> calls</small></div>
-              <p class="cap">Same faithfulness and relevancy metrics, a quarter of the API calls.</p>
-              <div class="row">
-                <div><strong>502</strong><span>pages in the legal test corpus</span></div>
-                <div><strong>4</strong><span>chunking strategies compared</span></div>
-              </div>
-            </div>
-            <span class="acc" aria-hidden="true"></span>
+          <div class="hud-head" style="margin-top:22px"><span><b>benchmark</b> · retrieval Hit@3, 36 questions</span><span class="pill">2026-11-05</span></div>
+          <div class="bars">
+            <div class="bar"><span>fixed-size</span><span class="tr"><span class="fl lo" style="--w:69.4%"></span></span><strong>69.4%</strong></div>
+            <div class="bar"><span>structure-aware</span><span class="tr"><span class="fl" style="--w:77.8%"></span></span><strong>77.8%</strong></div>
           </div>
+          <p class="mono" style="margin-top:16px;font-size:11.5px;color:var(--faint);line-height:1.6">The current benchmark scores 100% faithfulness and 97.2% correctness with one Gemini judge. Gemini judging Gemini can be lenient, so 100% is treated as an upper bound until a second-provider judge confirms it.</p>
         </div>
-      </div>
 
-      <!-- RECOUP -->
-      <div class="panel proj-panel">
-        <div class="inner proj">
-          <div>
-            <div class="p-idx"><span class="n">03</span><span class="mono">Agents · Payments</span></div>
-            <h3 class="p-name sp-h">Recoup</h3>
-            <p class="p-tag">Payment recovery with a LangGraph agent that only acts when it's confident.</p>
-            <ul class="p-pts">
-              <li><span><b>Confidence gate in code</b>, not the prompt, with a max-attempt limit before escalating.</span></li>
-              <li><span><b>Real actions</b>: Razorpay test-mode links and SMTP outreach, all persisted for audit.</span></li>
-              <li><span><b>Full-stack solo</b>: FastAPI on Azure, React and TypeScript on Vercel, SHA-256 pre-hash before bcrypt.</span></li>
-            </ul>
-            <div class="p-links">
-              <a class="btn fill mag" href="https://recoup-one.vercel.app/" target="_blank" rel="noopener" data-c="open">Live <span class="ar">↗</span></a>
-              <a class="btn mag" href="https://github.com/Vaidik-Dave23/Recoup" target="_blank" rel="noopener" data-c="code">Code <span class="ar">↗</span></a>
-            </div>
-          </div>
-          <div class="card">
-            <div class="ci">
-              <div class="ct"><span>LangGraph</span><span>Agent flow</span></div>
-              <div class="flow">
-                <div class="st"><span>01</span><b>triage</b></div>
-                <div class="st"><span>02</span><b>strategize</b></div>
-                <div class="st"><span>03</span><b>generate</b></div>
-                <div class="st"><span>04 · confidence ≥ threshold?</span><b>gate</b></div>
-                <div class="split"><div class="st go"><span>yes</span><b>execute</b></div><div class="st"><span>no</span><b>escalate</b></div></div>
-              </div>
-            </div>
-            <span class="acc" aria-hidden="true"></span>
-          </div>
+        <div class="ch-tag rise"><span class="pill">FastAPI</span><span class="pill">React 19</span><span class="pill">MongoDB Atlas</span><span class="pill">Azure App Service</span><span class="pill">GitHub Actions</span><span class="pill">Prometheus</span><span class="pill">OpenTelemetry</span></div>
+        <div class="links rise">
+          <a class="btn hot mag" href="https://auvon-ai.vercel.app/" target="_blank" rel="noopener">Live demo ↗</a>
+          <a class="btn mag" href="https://www.youtube.com/watch?v=wYbqiBTeo_8" target="_blank" rel="noopener">▶ Watch demo</a>
+          <a class="btn mag" href="https://github.com/Vaidik-Dave23/Auvon.ai" target="_blank" rel="noopener">Source ↗</a>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="sec" id="stack">
+  <!-- 02 DOCMIND -->
+  <section class="chapter" id="docmind" data-morph="2" data-gx="2.1">
     <div class="wrap">
-      <div class="sec-h">
-        <h2><span class="ln"><span class="sp-up">The <em>toolkit</em></span></span></h2>
-        <span class="mono">( Stack )</span>
-      </div>
-      <div class="rows">
-        <div class="rw"><span class="t">Languages &amp; APIs</span><span class="d">Python, FastAPI, Flask, LangGraph, REST design</span><span class="dim">01</span></div>
-        <div class="rw"><span class="t">Data &amp; retrieval</span><span class="d">MongoDB Atlas, PostgreSQL, FAISS, Redis</span><span class="dim">02</span></div>
-        <div class="rw"><span class="t">Infra &amp; observability</span><span class="d">Azure App Service, GitHub Actions, Docker, Prometheus, Grafana, OpenTelemetry</span><span class="dim">03</span></div>
-        <div class="rw"><span class="t">Frontend</span><span class="d">React, TypeScript, Vue.js, streaming UI</span><span class="dim">04</span></div>
-      </div>
-    </div>
-  </section>
+      <div class="ch-card">
+        <span class="ch-num rise">02</span>
+        <span class="ch-tag rise"><span class="pill">RAG benchmarking</span><span class="pill">502-page legal corpus</span><span class="pill">MiniLM · FAISS</span></span>
+        <h2 class="ch-title scr" data-text="DocMind">DocMind</h2>
+        <p class="ch-sub rise">A multi-document RAG engine with query, extract and compare modes, plus the benchmark harness that tests it. The particles are the corpus, sliced into chunks.</p>
 
-  <section class="sec" id="education" style="padding-top:6vh">
-    <div class="wrap">
-      <div class="sec-h">
-        <h2><span class="ln"><span class="sp-up"><em>Education</em></span></span></h2>
-        <span class="mono">( Formal )</span>
-      </div>
-      <div class="rows">
-        <div class="rw"><span class="t">IIT Madras</span><span class="d">BS in Data Science &amp; Applications, in progress</span><span class="dim">Expected 2027</span></div>
-        <div class="rw"><span class="t">JNV University</span><span class="d">Bachelor of Computer Applications</span><span class="dim">July 2026</span></div>
-      </div>
-    </div>
-  </section>
+        <div class="glass tilt rise">
+          <div class="glare"></div>
+          <div class="hud-head"><span><b>evaluator.calls</b> · per query</span><button class="ctl" id="cache-btn" type="button" aria-pressed="true">evaluator: v2</button></div>
+          <div class="dots" id="dots"></div>
+          <div class="hud-row"><div><span class="big-n" id="calls">2</span><span class="mono" style="color:var(--dim);font-size:12px"> LLM calls / query</span></div><span class="pill" id="saving">−75%</span></div>
+          <div class="how" id="how">
+            <div><b>01</b><span>Batched Gemini judge calls into fewer requests</span></div>
+            <div><b>02</b><span>Relevancy scored locally with Sentence-Transformers (all-MiniLM-L6-v2) cosine similarity</span></div>
+            <div><b>03</b><span>SHA-256 keyed score cache so repeat evaluations never hit the API</span></div>
+          </div>
+        </div>
 
-  <section class="contact" id="contact">
-    <div class="wrap">
-      <span class="mono">( Contact )</span>
-      <h2 aria-label="Let's build something real."><span class="ln"><span class="sp-up">Let's build</span></span><span class="ln"><span class="sp-up">something <em>real.</em></span></span></h2>
-      <div class="c-row">
-        <button class="orb mag" id="copy" type="button" data-c="copy">Copy<br>email</button>
-        <div style="display:grid;gap:18px;min-width:0">
-          <span class="mail" id="mail">davevaidik20@gmail.com</span>
-          <div class="socials"><a class="hl" href="https://www.linkedin.com/in/vaidik-dave-0457873ab" target="_blank" rel="noopener"><span>LinkedIn ↗</span><span>LinkedIn ↗</span></a><a class="hl" href="https://github.com/Vaidik-Dave23" target="_blank" rel="noopener"><span>GitHub ↗</span><span>GitHub ↗</span></a></div>
+        <ul class="pts glass rise">
+          <li><span>Benchmarked <strong>4 chunking strategies</strong> on a dense 502-page legal judgment. Naive fixed-size chunking beat semantic and hierarchical chunking on context precision, a documented counter-intuitive result.</span></li>
+          <li><span>Built a <strong>RAGAS-style evaluator</strong> that cut LLM calls per query from 8 to 2 with batched judge prompts, local Sentence-Transformers similarity for relevancy, and SHA-256 score caching.</span></li>
+          <li><span>Cached chunk embeddings once at upload so compare mode stops re-running <strong>encode()</strong> on every request, which fixed a major latency issue.</span></li>
+          <li><span>Added a retrieval-only <strong>/debug/retrieve</strong> endpoint and an R@k / MRR benchmark to test retrieval separately from generation.</span></li>
+          <li><span>Fixed a <strong>silent retrieval failure</strong> from a metadata schema mismatch, and a module-scoping bug where direct imports held stale copies of the live FAISS store. Soft-delete on FAISS IndexFlatL2 trades memory for compute.</span></li>
+        </ul>
+        <div class="ch-tag rise"><span class="pill">FastAPI</span><span class="pill">FAISS</span><span class="pill">Sentence-Transformers</span><span class="pill">Gemini 2.5 Flash</span><span class="pill">RAGAS-style eval</span></div>
+        <div class="links rise">
+          <a class="btn hot mag" href="https://github.com/Vaidik-Dave23/Multi-DOC-RAG" target="_blank" rel="noopener">Source ↗</a>
         </div>
       </div>
     </div>
-    <footer><div class="wrap"><span class="mono">© 2026 Vaidik Dave</span><span class="mono">Built end to end, alone</span></div></footer>
+  </section>
+
+  <!-- 03 RECOUP -->
+  <section class="chapter" id="recoup" data-morph="3" data-gx="2.1">
+    <div class="wrap">
+      <div class="ch-card">
+        <span class="ch-num rise">03</span>
+        <span class="ch-tag rise"><span class="pill">LangGraph agent</span><span class="pill">Payments</span></span>
+        <h2 class="ch-title scr" data-text="Recoup">Recoup</h2>
+        <p class="ch-sub rise">AI payment recovery with an agent that gates its own actions on confidence. The particles trace its graph.</p>
+
+        <div class="glass tilt rise">
+          <div class="glare"></div>
+          <div class="hud-head"><span><b>recoup.agent</b> · confidence gate</span><span class="pill">demo values</span></div>
+          <div class="graph"><div class="nd" data-n="triage">triage</div><div class="nd" data-n="strategize">strategize</div><div class="nd" data-n="generate">generate</div><div class="nd" data-n="gate">gate <span id="att">0</span>/3</div></div>
+          <div class="outs"><div class="nd" id="o-exec">execute · pay link + email</div><div class="nd" id="o-esc">escalate · human</div></div>
+          <div class="sl">
+            <div><label for="conf">model confidence <output id="conf-o">0.82</output></label><input id="conf" type="range" min="0" max="1" step="0.01" value="0.82"></div>
+            <div><label for="thr">gate threshold <output id="thr-o">0.75</output></label><input id="thr" type="range" min="0" max="1" step="0.01" value="0.75"></div>
+          </div>
+          <button class="ctl fire" id="run" type="button">▶ Run agent</button>
+          <div class="log" id="alog" aria-live="polite"><div><span class="t">idle</span> set a confidence, then run. every step is persisted for audit.</div></div>
+        </div>
+
+        <ul class="pts glass rise">
+          <li><span>Built a stateful <strong>LangGraph agent</strong> (triage → strategize → generate → execute, or escalate) on Gemini, with the confidence threshold and max-attempt limit enforced in backend logic, not the prompt.</span></li>
+          <li><span>Wired output to real actions: <strong>Razorpay</strong> test-mode Payment Links and optional SMTP outreach, every action and outcome persisted for audit.</span></li>
+          <li><span>Shipped full-stack solo: <strong>FastAPI</strong>, async SQLAlchemy and PostgreSQL on Azure App Service, a React and TypeScript dashboard on Vercel, JWT auth with merchant-scoped isolation.</span></li>
+          <li><span>Fixed a production auth bug by <strong>pre-hashing with SHA-256 before bcrypt</strong>, removing the 72-byte truncation while staying compatible with legacy hashes.</span></li>
+        </ul>
+        <div class="links rise">
+          <a class="btn hot mag" href="https://recoup-one.vercel.app/" target="_blank" rel="noopener">Live demo ↗</a>
+          <a class="btn mag" href="https://github.com/Vaidik-Dave23/Recoup" target="_blank" rel="noopener">Source ↗</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STACK -->
+  <section class="stack" id="stack" data-morph="4" data-gx="0">
+    <div class="wrap"><h2 class="sec-title scr" data-text="The stack">The stack</h2></div>
+    <div class="chips-row"><div class="chips-track" data-dir="1">
+      <span class="chip"><small>lang</small>Python</span><span class="chip"><small>api</small>FastAPI</span><span class="chip"><small>api</small>Flask</span><span class="chip"><small>agents</small>LangGraph</span><span class="chip"><small>api</small>REST design</span><span class="chip"><small>lang</small>Python</span><span class="chip"><small>api</small>FastAPI</span><span class="chip"><small>api</small>Flask</span><span class="chip"><small>agents</small>LangGraph</span><span class="chip"><small>api</small>REST design</span>
+    </div></div>
+    <div class="chips-row"><div class="chips-track" data-dir="-1">
+      <span class="chip"><small>data</small>MongoDB Atlas</span><span class="chip"><small>data</small>PostgreSQL</span><span class="chip"><small>vectors</small>FAISS</span><span class="chip"><small>eval</small>LLM-as-judge</span><span class="chip"><small>cache</small>Redis</span><span class="chip"><small>infra</small>Azure App Service</span><span class="chip"><small>ci</small>GitHub Actions</span><span class="chip"><small>infra</small>Docker</span><span class="chip"><small>data</small>MongoDB Atlas</span><span class="chip"><small>data</small>PostgreSQL</span><span class="chip"><small>vectors</small>FAISS</span><span class="chip"><small>eval</small>LLM-as-judge</span><span class="chip"><small>cache</small>Redis</span><span class="chip"><small>infra</small>Azure App Service</span><span class="chip"><small>ci</small>GitHub Actions</span><span class="chip"><small>infra</small>Docker</span>
+    </div></div>
+    <div class="chips-row"><div class="chips-track" data-dir="1">
+      <span class="chip"><small>obs</small>Prometheus + Grafana</span><span class="chip"><small>obs</small>OpenTelemetry</span><span class="chip"><small>ui</small>React</span><span class="chip"><small>ui</small>Vue.js</span><span class="chip"><small>ui</small>Streaming UI</span><span class="chip"><small>ui</small>Async UI state</span><span class="chip"><small>obs</small>Prometheus + Grafana</span><span class="chip"><small>obs</small>OpenTelemetry</span><span class="chip"><small>ui</small>React</span><span class="chip"><small>ui</small>Vue.js</span><span class="chip"><small>ui</small>Streaming UI</span><span class="chip"><small>ui</small>Async UI state</span>
+    </div></div>
+  </section>
+
+  <!-- EDUCATION -->
+  <section class="edu" id="education" data-morph="4" data-gx="0">
+    <div class="wrap">
+      <h2 class="sec-title scr" data-text="Education">Education</h2>
+      <div class="edu-list">
+        <div class="glass edu-item rise"><div><h3>IIT Madras · BS in Data Science &amp; Applications</h3><p>In progress</p></div><span class="when">Expected 2027</span></div>
+        <div class="glass edu-item rise"><div><h3>Bachelor of Computer Applications (BCA)</h3><p>Jai Narain Vyas University</p></div><span class="when">July 2026</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="contact" id="contact" data-morph="4" data-gx="0">
+    <div class="wrap">
+      <p class="kicker" style="margin-bottom:24px"><span><b>●</b> Open to Applied AI · LLM · Backend infra roles</span></p>
+      <h2 class="cta-big"><span class="row">Let's build</span><span class="row"><span class="fill" id="fill" data-t="something">something</span></span><span class="row grad">real.</span></h2>
+      <p class="lead">Looking for teams building production LLM systems: routing, retrieval, evaluation, or the infrastructure that keeps it all online.</p>
+      <div class="mailrow">
+        <span class="mail" id="mail">davevaidik20@gmail.com</span>
+        <button class="btn hot mag" id="copy" type="button">Copy email</button>
+        <a class="btn mag" href="https://www.linkedin.com/in/vaidik-dave-0457873ab" target="_blank" rel="noopener">LinkedIn ↗</a>
+        <a class="btn mag" href="https://github.com/Vaidik-Dave23" target="_blank" rel="noopener">GitHub ↗</a>
+      </div>
+    </div>
   </section>
 </main>
 
+<footer><div class="wrap"><span>© 2026 Vaidik Dave</span><span>Built end to end, alone.</span></div></footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
 <script>
 (() => {
-  const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const touch = matchMedia('(hover: none), (pointer: coarse)').matches;
-  const G = typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined';
-  if (G) gsap.registerPlugin(ScrollTrigger);
+  const hasGSAP = typeof gsap !== 'undefined';
+  if (hasGSAP && typeof ScrollTrigger !== 'undefined') gsap.registerPlugin(ScrollTrigger);
+  const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+  const istTime = () => { try { return new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(new Date()); } catch (e) { return ''; } };
 
   /* clock */
-  const tick = () => { try { $('#clock').textContent = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' }).format(new Date()) + ' IST'; } catch (e) {} };
-  tick(); setInterval(tick, 15000);
+  const clk = $('#clock'); const tickC = () => clk.textContent = istTime() + ' IST'; tickC(); setInterval(tickC, 1000);
 
-  /* split helpers */
-  const splitChars = el => {
-    const walk = node => [...node.childNodes].forEach(n => {
-      if (n.nodeType === 3) {
-        const f = document.createDocumentFragment();
-        n.textContent.split(/(\s+)/).forEach(part => {
-          if (!part) return;
-          if (/^\s+$/.test(part)) { f.appendChild(document.createTextNode(' ')); return; }
-          const w = document.createElement('span'); w.style.display = 'inline-block'; w.style.whiteSpace = 'nowrap';
-          [...part].forEach(c => { const s = document.createElement('span'); s.className = 'ch'; s.textContent = c; w.appendChild(s); });
-          f.appendChild(w);
-        });
-        n.replaceWith(f);
-      } else if (n.nodeType === 1) walk(n);
-    });
-    walk(el);
-    return [...el.querySelectorAll('.ch')];
-  };
-  $$('.sp, .sp-h, .sp-up').forEach(splitChars);
-  // statement words
-  const stmt = $('#stmt');
-  const words = [];
-  [...stmt.childNodes].forEach(n => {
-    const isEm = n.nodeType === 1;
-    const text = n.textContent; const f = document.createDocumentFragment();
-    text.split(/(\s+)/).forEach(part => { if (!part) return; if (/^\s+$/.test(part)) { f.appendChild(document.createTextNode(' ')); return; } const s = document.createElement('span'); s.className = 'wd' + (isEm ? ' em' : ''); s.textContent = part; words.push(s); f.appendChild(s); });
-    n.replaceWith(f);
+  /* split hero name into chars */
+  $$('.name .line').forEach((ln, li) => {
+    const t = ln.textContent; ln.textContent = '';
+    [...t].forEach(c => { const s = document.createElement('span'); s.className = 'ch' + (li === 1 ? ' grad' : ''); s.textContent = c; ln.appendChild(s); });
   });
 
-  /* smooth scroll */
-  let lenis = null;
-  if (!reduce && typeof Lenis !== 'undefined') {
-    lenis = new Lenis({ duration: 1.25, easing: t => 1 - Math.pow(1 - t, 4) });
-    if (G) { lenis.on('scroll', ScrollTrigger.update); gsap.ticker.add(t => lenis.raf(t * 1000)); gsap.ticker.lagSmoothing(0); }
-    $$('a[href^="#"]').forEach(a => a.addEventListener('click', e => { const id = a.getAttribute('href'); if (id.length > 1 && $(id)) { e.preventDefault(); lenis.scrollTo(id); } }));
-    lenis.stop();
+  /* ================= THREE: morphing particle brain ================= */
+  const S = { morph: 0, morphT: 0, gx: 1.4, gxT: 1.4, mx: 0, my: 0, keys: new Float32Array(19), keysT: new Float32Array(19), fb: 0, fbT: 0, burst: 0 };
+  let renderGL = null;
+  if (typeof THREE !== 'undefined') {
+    const canvas = $('#gl');
+    let renderer;
+    try { renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: true, powerPreference: 'high-performance' }); } catch (e) { renderer = null; }
+    if (renderer) {
+      renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(45, 1, .1, 100); camera.position.set(0, 0, 8);
+      const N = touch ? 4200 : 9000;
+      const A = new Float32Array(N * 3), B = new Float32Array(N * 3), Cc = new Float32Array(N * 3), D = new Float32Array(N * 3), R = new Float32Array(N), K = new Float32Array(N);
+      const gauss = () => { let u = 0, v = 0; while (!u) u = Math.random(); while (!v) v = Math.random(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); };
+      const ga = Math.PI * (3 - Math.sqrt(5));
+      // three model clusters around a request core
+      const ringPos = [[0, 2.0, 0], [-2.0, -1.25, .3], [2.0, -1.25, -.3]];
+      // agent graph nodes
+      const gNodes = [[-3, 0, 0], [-1.5, .6, .3], [0, -.4, -.2], [1.3, .3, .2], [2.8, 1.3, 0], [2.8, -1.3, 0]];
+      const gEdges = [[0, 1], [1, 2], [2, 3], [3, 4], [3, 5], [3, 1]];
+      for (let i = 0; i < N; i++) {
+        const r = Math.random(); R[i] = r; K[i] = -1;
+        // A: fibonacci sphere with lumpy radius (brain)
+        const y = 1 - (i / (N - 1)) * 2, rad = Math.sqrt(1 - y * y), th = ga * i;
+        const lump = 2.2 * (1 + .08 * Math.sin(th * 3.0) * Math.cos(y * 6.0)) + (Math.random() - .5) * .08;
+        A.set([Math.cos(th) * rad * lump, y * lump * .92, Math.sin(th) * rad * lump * 1.05], i * 3);
+        // B: model cascade: core / spokes / 3 clusters
+        const m = i % 10;
+        if (m === 0) { B.set([gauss() * .22, gauss() * .22, gauss() * .22], i * 3); K[i] = -2; }
+        else if (m <= 2) { const k = i % 3, t = Math.random(); const p = ringPos[k]; B.set([p[0] * t + gauss() * .03, p[1] * t + gauss() * .03, p[2] * t], i * 3); K[i] = 10 + k; }
+        else if (m === 3) { const k = i % 3, a = Math.random() * Math.PI * 2, rr = .62 + gauss() * .02; const p = ringPos[k]; B.set([p[0] + Math.cos(a) * rr, p[1] + Math.sin(a) * rr, p[2] + Math.sin(a * 2) * .08], i * 3); K[i] = k; }
+        else { const k = i % 3; const p = ringPos[k]; B.set([p[0] + gauss() * .26, p[1] + gauss() * .26, p[2] + gauss() * .26], i * 3); K[i] = k; }
+        // C: document stack → 8 pages, chunk grid
+        const pg = i % 8, z = -1.75 + pg * .5;
+        const cx = Math.floor(Math.random() * 6), cy = Math.floor(Math.random() * 9);
+        const jitter = Math.random() < .7 ? .02 : .08;
+        Cc.set([(-1.25 + cx * .5 + (Math.random() - .5) * .38) + pg * .12, (-2 + cy * .5 + (Math.random() - .5) * jitter * 4) - pg * .06, z + (Math.random() - .5) * jitter], i * 3);
+        // D: agent graph: nodes + edges
+        if (Math.random() < .55) { const n = gNodes[i % gNodes.length]; D.set([n[0] + gauss() * .16, n[1] + gauss() * .16, n[2] + gauss() * .16], i * 3); }
+        else { const e = gEdges[i % gEdges.length], a = gNodes[e[0]], b = gNodes[e[1]], t = Math.random(); const arc = e[0] === 3 && e[1] === 1 ? Math.sin(t * Math.PI) * -1.4 : 0; D.set([a[0] + (b[0] - a[0]) * t + gauss() * .03, a[1] + (b[1] - a[1]) * t + arc + gauss() * .03, a[2] + (b[2] - a[2]) * t + gauss() * .03], i * 3); }
+      }
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.BufferAttribute(A, 3));
+      geo.setAttribute('aB', new THREE.BufferAttribute(B, 3));
+      geo.setAttribute('aC', new THREE.BufferAttribute(Cc, 3));
+      geo.setAttribute('aD', new THREE.BufferAttribute(D, 3));
+      geo.setAttribute('aR', new THREE.BufferAttribute(R, 1));
+      geo.setAttribute('aK', new THREE.BufferAttribute(K, 1));
+      const uniforms = {
+        uTime: { value: 0 }, uMorph: { value: 0 }, uPR: { value: renderer.getPixelRatio() }, uSize: { value: touch ? 34 : 28 },
+        uMouse: { value: new THREE.Vector2(99, 99) }, uC1: { value: new THREE.Color('#8b6dff') }, uC2: { value: new THREE.Color('#ff5a36') },
+        uKeys: { value: new Array(19).fill(0) }, uFb: { value: 0 }, uBurst: { value: 0 }, uAlpha: { value: touch ? .75 : .95 }
+      };
+      const mat = new THREE.ShaderMaterial({
+        uniforms, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+        vertexShader: `
+          attribute vec3 aB; attribute vec3 aC; attribute vec3 aD; attribute float aR; attribute float aK;
+          uniform float uTime, uMorph, uPR, uSize, uFb, uBurst; uniform vec2 uMouse; uniform vec3 uC1, uC2; uniform float uKeys[19];
+          varying vec3 vCol; varying float vA;
+          float ease(float t){ return t<.5 ? 4.*t*t*t : 1.-pow(-2.*t+2.,3.)/2.; }
+          float local(float f){ return ease(clamp((f - aR*.35)/.65, 0., 1.)); }
+          void main(){
+            vec3 p; float m = clamp(uMorph, 0., 4.);
+            if (m < 1.) p = mix(position, aB, local(m));
+            else if (m < 2.) p = mix(aB, aC, local(m-1.));
+            else if (m < 3.) p = mix(aC, aD, local(m-2.));
+            else p = mix(aD, position, local(m-3.));
+            float t = uTime;
+            p += vec3(sin(t*.8 + aR*40. + p.y*2.), cos(t*.7 + aR*30. + p.x*2.), sin(t*.6 + aR*20. + p.z*2.)) * (.035 + uBurst*.25);
+            vec4 w = modelMatrix * vec4(p, 1.);
+            vec2 d = w.xy - uMouse; float l = length(d);
+            w.xy += normalize(d + 1e-4) * smoothstep(1.4, 0., l) * .45;
+            vec4 mv = viewMatrix * w;
+            gl_Position = projectionMatrix * mv;
+            float sparkle = step(.985, aR);
+            gl_PointSize = uSize * (.45 + aR*.9 + sparkle*1.2) * uPR / -mv.z;
+            vec3 c = mix(uC1, uC2, smoothstep(-2.6, 2.6, w.x + w.y*.6 + sin(t*.4)*1.2));
+            float ring = 1. - min(1., abs(uMorph - 1.));
+            if (aK >= 0.) { float id = aK >= 9.5 ? aK - 10. : aK; float k = 0.; for (int i=0;i<3;i++){ if (abs(float(i)-id) < .5) k = uKeys[i]; } vec3 kc = k < .5 ? mix(vec3(.36,.95,.7), vec3(1.,.71,.28), k*2.) : mix(vec3(1.,.71,.28), vec3(1.,.24,.35), k*2.-1.); c = mix(c, kc, ring*.85); }
+            if (aK < -1.5) c = mix(c, mix(vec3(1.), vec3(1.,.35,.21), uFb), ring);
+            c = mix(c, vec3(1.), sparkle*.7);
+            vCol = c; vA = .55 + aR*.45;
+          }`,
+        fragmentShader: `
+          uniform float uAlpha; varying vec3 vCol; varying float vA;
+          void main(){ float d = length(gl_PointCoord - .5); float a = smoothstep(.5, .05, d); gl_FragColor = vec4(vCol, a * vA * uAlpha); }`
+      });
+      const pts = new THREE.Points(geo, mat);
+      const group = new THREE.Group(); group.add(pts); scene.add(group);
+
+      // dust field
+      const dn = touch ? 500 : 1200, dp = new Float32Array(dn * 3);
+      for (let i = 0; i < dn; i++) dp.set([(Math.random() - .5) * 30, (Math.random() - .5) * 20, -Math.random() * 18 - 2], i * 3);
+      const dg = new THREE.BufferGeometry(); dg.setAttribute('position', new THREE.BufferAttribute(dp, 3));
+      const dust = new THREE.Points(dg, new THREE.PointsMaterial({ color: 0x8b6dff, size: .035, transparent: true, opacity: .55, depthWrite: false, blending: THREE.AdditiveBlending }));
+      scene.add(dust);
+
+      const resize = () => { const w = innerWidth, h = innerHeight; renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix(); camera.position.z = w < 700 ? 10.5 : 8; };
+      addEventListener('resize', resize); resize();
+
+      const ray = new THREE.Raycaster(), plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0), hit = new THREE.Vector3();
+      let mouseNDC = null;
+      addEventListener('pointermove', e => { mouseNDC = new THREE.Vector2(e.clientX / innerWidth * 2 - 1, -(e.clientY / innerHeight) * 2 + 1); S.mx = mouseNDC.x; S.my = mouseNDC.y; });
+      addEventListener('pointerleave', () => { mouseNDC = null; });
+
+      const clock = new THREE.Clock();
+      renderGL = () => {
+        const dt = Math.min(clock.getDelta(), .05), t = clock.elapsedTime;
+        S.morph += (S.morphT - S.morph) * Math.min(1, dt * 3.2);
+        S.gx += (S.gxT - S.gx) * Math.min(1, dt * 2.5);
+        S.fb += (S.fbT - S.fb) * Math.min(1, dt * 4);
+        S.burst *= Math.pow(.02, dt);
+        for (let k = 0; k < 19; k++) { S.keys[k] += (S.keysT[k] - S.keys[k]) * Math.min(1, dt * 8); uniforms.uKeys.value[k] = S.keys[k]; }
+        uniforms.uTime.value = t; uniforms.uMorph.value = S.morph; uniforms.uFb.value = S.fb; uniforms.uBurst.value = S.burst;
+        const narrow = innerWidth < 900;
+        group.position.x = narrow ? 0 : S.gx;
+        group.position.y = narrow ? .4 : 0;
+        const spin = reduce ? 0 : Math.sin(t * .22) * .55;
+        group.rotation.y = spin + S.mx * .35 * (S.morph > .5 && S.morph < 3.5 ? .5 : 1);
+        group.rotation.x = -S.my * .25 + Math.sin(t * .17) * .12;
+        dust.rotation.y = t * .01; dust.position.y = (scrollY / innerHeight) * .6;
+        if (mouseNDC) { ray.setFromCamera(mouseNDC, camera); ray.ray.intersectPlane(plane, hit); uniforms.uMouse.value.set(hit.x, hit.y); } else uniforms.uMouse.value.set(99, 99);
+        renderer.render(scene, camera);
+      };
+    }
   }
 
-  /* cursor */
-  const dot = $('.c-dot'), ring = $('.c-ring'), lab = ring.querySelector('span');
-  let mx = -100, my = -100, rx = -100, ry = -100;
-  addEventListener('pointermove', e => { mx = e.clientX; my = e.clientY; dot.style.transform = `translate(${mx}px,${my}px)`; });
-  const rloop = () => { rx += (mx - rx) * .14; ry += (my - ry) * .14; ring.style.transform = `translate(${rx}px,${ry}px)`; requestAnimationFrame(rloop); };
-  if (!touch) rloop();
-  const setC = (t) => { if (t) { lab.textContent = t; ring.classList.add('on'); } else ring.classList.remove('on'); };
-  $$('[data-c]').forEach(el => {
-    el.addEventListener('pointerenter', e => { e.stopPropagation(); setC(el.dataset.c); });
-    el.addEventListener('pointerleave', () => { const parent = el.parentElement && el.parentElement.closest('[data-c]'); setC(parent ? parent.dataset.c : null); });
-  });
-  // the scroll label inside the work section is subtle: only when not over a link
-  $('#work').addEventListener('pointerover', e => { if (!e.target.closest('a,button')) setC(innerWidth >= 900 ? 'scroll' : null); });
+  /* scroll → morph target */
+  const secs = $$('[data-morph]');
+  const updateMorph = () => {
+    const c = scrollY + innerHeight * .5; let pts = secs.map(s => ({ y: s.offsetTop + s.offsetHeight * .5, m: +s.dataset.morph, gx: +s.dataset.gx }));
+    if (c <= pts[0].y) { S.morphT = pts[0].m; S.gxT = pts[0].gx; return; }
+    for (let i = 0; i < pts.length - 1; i++) {
+      const a = pts[i], b = pts[i + 1];
+      if (c >= a.y && c <= b.y) { const f = (c - a.y) / (b.y - a.y); const ff = Math.min(1, Math.max(0, (f - .25) / .5)); S.morphT = a.m + (b.m - a.m) * ff; S.gxT = a.gx + (b.gx - a.gx) * ff; return; }
+    }
+    const l = pts[pts.length - 1]; S.morphT = l.m; S.gxT = l.gx;
+  };
+  addEventListener('scroll', updateMorph, { passive: true }); addEventListener('resize', updateMorph); updateMorph();
 
-  /* magnetic */
+  /* marquee + chips loop, skew with scroll velocity */
+  const mq = $('#mq'); let mqX = 0, vel = 0, lastY = scrollY;
+  const chipTracks = $$('.chips-track').map(el => ({ el, x: 0, dir: +el.dataset.dir }));
+
+  /* custom cursor */
+  const cur = $('.cur'), dot = $('.cur-dot'); let cx = innerWidth / 2, cy = innerHeight / 2, tx = cx, ty = cy;
+  addEventListener('pointermove', e => { tx = e.clientX; ty = e.clientY; dot.style.transform = `translate(${tx}px,${ty}px)`; });
+  $$('a, button, input, .glass').forEach(el => { el.addEventListener('pointerenter', () => { if (el.matches('a,button')) cur.classList.add('big'); }); el.addEventListener('pointerleave', () => cur.classList.remove('big')); });
+
+  /* magnetic buttons */
   if (!touch && !reduce) $$('.mag').forEach(b => {
-    b.addEventListener('pointermove', e => { const r = b.getBoundingClientRect(); b.style.transform = `translate(${(e.clientX - r.left - r.width / 2) * .3}px, ${(e.clientY - r.top - r.height / 2) * .4}px)`; });
-    b.addEventListener('pointerleave', () => { b.animate([{ transform: b.style.transform }, { transform: 'translate(0,0)' }], { duration: 700, easing: 'cubic-bezier(.16,1,.3,1)' }); b.style.transform = ''; });
+    b.addEventListener('pointermove', e => { const r = b.getBoundingClientRect(); const x = e.clientX - r.left - r.width / 2, y = e.clientY - r.top - r.height / 2; b.style.transform = `translate(${x * .25}px, ${y * .35}px)`; });
+    b.addEventListener('pointerleave', () => { b.style.transform = ''; });
   });
 
-  /* project name hover wave */
-  $$('.p-name').forEach(h => {
-    const chs = [...h.querySelectorAll('.ch')];
-    chs.forEach(c => c.addEventListener('transitionend', () => {}));
-    const tr = 'transform .6s cubic-bezier(.16,1,.3,1), color .4s';
-    h.addEventListener('pointerenter', () => chs.forEach((c, i) => { c.style.transition = tr; c.style.transitionDelay = i * 28 + 'ms'; c.style.transform = 'translateY(-12%) rotate(-3deg)'; c.style.color = 'var(--ember)'; }));
-    h.addEventListener('pointerleave', () => { chs.forEach((c, i) => { c.style.transitionDelay = i * 20 + 'ms'; c.style.transform = 'translate(0,0)'; c.style.color = ''; }); setTimeout(() => chs.forEach(c => { c.style.transition = ''; c.style.transitionDelay = ''; }), 900); });
+  /* tilt cards */
+  if (!touch && !reduce) $$('.tilt').forEach(c => {
+    c.addEventListener('pointermove', e => { const r = c.getBoundingClientRect(); const px = (e.clientX - r.left) / r.width, py = (e.clientY - r.top) / r.height; c.style.transform = `perspective(900px) rotateX(${(.5 - py) * 7}deg) rotateY(${(px - .5) * 9}deg)`; c.style.setProperty('--gx', px * 100 + '%'); c.style.setProperty('--gy', py * 100 + '%'); });
+    c.addEventListener('pointerleave', () => { c.style.transform = ''; });
+  });
+
+  /* main loop */
+  const loop = () => {
+    const dy = scrollY - lastY; lastY = scrollY; vel += (dy - vel) * .12;
+    if (!reduce) {
+      mqX -= 1.2 + Math.abs(vel) * .25; const w = mq.children[0].offsetWidth; if (-mqX >= w) mqX += w;
+      mq.style.transform = `translateX(${mqX}px) skewX(${Math.max(-12, Math.min(12, -vel * .4))}deg)`;
+      chipTracks.forEach(t => { const half = t.el.scrollWidth / 2; t.x -= t.dir * (.6 + Math.abs(vel) * .15); if (t.x <= -half) t.x += half; if (t.x > 0) t.x -= half; t.el.style.transform = `translateX(${t.x}px)`; });
+    }
+    cx += (tx - cx) * .18; cy += (ty - cy) * .18; cur.style.transform = `translate(${cx}px,${cy}px)`;
+    if (renderGL) renderGL();
+    requestAnimationFrame(loop);
+  };
+  requestAnimationFrame(loop);
+
+  /* scramble text */
+  const GLY = '!<>-_\\/[]{}=+*^?#01ABCDEF';
+  const scramble = (el) => {
+    const final = el.dataset.text; let f = 0; const total = 26;
+    const step = () => { el.textContent = [...final].map((ch, i) => (ch === ' ' || f / total > i / final.length + .15) ? ch : GLY[Math.floor(Math.random() * GLY.length)]).join(''); if (++f <= total) requestAnimationFrame(step); else el.textContent = final; };
+    step();
+  };
+
+  /* counters */
+  const countUp = el => { const end = +el.dataset.count, t0 = performance.now(); const f = t => { const p = Math.min(1, (t - t0) / 1400); el.textContent = Math.round(end * (1 - Math.pow(1 - p, 4))); if (p < 1) requestAnimationFrame(f); }; requestAnimationFrame(f); };
+
+  /* intro + scroll animations */
+  const intro = () => {
+    if (!hasGSAP || reduce) return;
+    gsap.from('.name .ch', { yPercent: 120, rotate: 8, duration: 1.3, ease: 'expo.out', stagger: .045 });
+    gsap.from('.kicker span, .thesis, .hero-cta .btn, .scroll-hint', { y: 30, opacity: 0, duration: 1, ease: 'expo.out', stagger: .08, delay: .5 });
+    if (typeof ScrollTrigger === 'undefined') return;
+    $$('.rise').forEach(el => gsap.from(el, { y: 70, opacity: .15, duration: 1.1, ease: 'expo.out', scrollTrigger: { trigger: el, start: 'top 88%' } }));
+    $$('.scr').forEach(el => ScrollTrigger.create({ trigger: el, start: 'top 85%', onEnter: () => scramble(el) }));
+    $$('[data-count]').forEach(el => ScrollTrigger.create({ trigger: el, start: 'top 90%', once: true, onEnter: () => countUp(el) }));
+    $$('.bar .fl').forEach(el => gsap.from(el, { width: 0, duration: 1.6, ease: 'expo.out', scrollTrigger: { trigger: el, start: 'top 90%' } }));
+    $$('.ch-num').forEach(el => gsap.to(el, { yPercent: -40, ease: 'none', scrollTrigger: { trigger: el, scrub: true } }));
+    ScrollTrigger.create({ trigger: '#fill', start: 'top 75%', onEnter: () => $('#fill').classList.add('lit') });
+  };
+
+  /* loader */
+  const loader = $('#loader');
+  const msgs = ['init model router', 'warming FAISS index', 'loading eval harness', 'compiling agent graph', 'ready'];
+  if (reduce) { loader.remove(); }
+  else {
+    const t0 = performance.now(), dur = 1500;
+    const lt = () => { const p = Math.min(1, (performance.now() - t0) / dur), e = 1 - Math.pow(1 - p, 3);
+      $('#pct').textContent = Math.round(e * 100); $('#pbar').style.width = e * 100 + '%'; $('#ltxt').textContent = msgs[Math.min(msgs.length - 1, Math.floor(e * msgs.length))];
+      if (p < 1) requestAnimationFrame(lt);
+      else { S.burst = 1; if (hasGSAP) gsap.to(loader, { yPercent: -100, duration: .9, ease: 'expo.inOut', onComplete: () => loader.remove() }); else loader.remove(); intro(); } };
+    requestAnimationFrame(lt);
+  }
+  if (reduce) intro();
+
+  /* ================= Auvon: model router (drives the 3D clusters) ================= */
+  const klog = $('#klog'), routeEl = $('#route'), streamEl = $('#stream'), sendBtn = $('#send');
+  const addLog = (el, html) => { const d = document.createElement('div'); d.innerHTML = `<span class="t">${istTime()}</span> ${html}`; el.appendChild(d); el.scrollTop = el.scrollHeight; while (el.children.length > 40) el.firstChild.remove(); };
+  const MODELS = ['gemini-3.5-flash', 'gemini-2.5-flash', 'gpt-4o-mini'];
+  const ERR = ['503 model overloaded', 'timeout · not retrying the same slow path', '429 quotaId=perDay · parked till UTC midnight'];
+  const rows = $$('#models .mrow'); const down = [false, false, false];
+  const paint = (state) => rows.forEach((r, i) => { r.classList.toggle('down', down[i]); r.classList.toggle('try', state[i] === 'try'); r.classList.toggle('serve', state[i] === 'serve'); S.keysT[i] = down[i] ? 1 : state[i] === 'try' ? .5 : 0; });
+  rows.forEach((r, i) => { const b = r.querySelector('.kill'); b.addEventListener('click', () => { down[i] = !down[i]; b.setAttribute('aria-pressed', String(down[i])); b.textContent = down[i] ? 'revive' : 'kill'; addLog(klog, down[i] ? `<span class="r">${MODELS[i]}</span> marked down` : `<span class="g">${MODELS[i]}</span> back up`); S.burst = .35; paint([]); }); });
+  paint([]);
+  const ANSWER = ['Self-attention', ' compares', ' every', ' token', ' with', ' every', ' other', ' token,', ' so', ' its', ' cost', ' grows', ' quadratically', ' with', ' sequence', ' length.'];
+  const sleep = ms => new Promise(r => setTimeout(r, reduce ? 0 : ms));
+  sendBtn.addEventListener('click', async () => {
+    sendBtn.disabled = true; streamEl.innerHTML = '<span class="ph">routing…</span>'; S.fbT = 0;
+    addLog(klog, `<span class="u">request</span> /notes/{id}/query/stream`);
+    let served = -1;
+    for (let i = 0; i < 3; i++) {
+      const st = []; st[i] = 'try'; paint(st); routeEl.textContent = `pass ${i + 1} · ${MODELS[i]}`; routeEl.classList.toggle('fb', i > 0); S.fbT = i * .45;
+      await sleep(520);
+      if (down[i]) { addLog(klog, `<span class="r">pass ${i + 1}</span> ${MODELS[i]} · ${ERR[i]} → next pass, before first token`); S.burst = .3; continue; }
+      served = i; const s2 = []; s2[i] = 'serve'; paint(s2); break;
+    }
+    if (served < 0) {
+      paint([]); S.fbT = 1; routeEl.textContent = '502 · all providers failed'; routeEl.classList.add('fb');
+      streamEl.innerHTML = '<span class="ph" style="color:var(--bad)">502 · every provider failed · last error returned to the client</span>';
+      addLog(klog, `<span class="r">502</span> all three passes failed · last error surfaced, nothing hangs`);
+      sendBtn.disabled = false; return;
+    }
+    addLog(klog, `<span class="g">first token</span> from ${MODELS[served]} · stream locked to this provider`);
+    streamEl.innerHTML = ''; const out = document.createElement('span'); const caret = document.createElement('span'); caret.className = 'caret'; streamEl.append(out, caret);
+    for (const tkn of ANSWER) { out.textContent += tkn; await sleep(60 + Math.random() * 60); }
+    caret.remove(); streamEl.insertAdjacentHTML('beforeend', ' <span class="src">[Source 2]</span>');
+    addLog(klog, `<span class="g">done</span> served by ${MODELS[served]} · cited · logged to ai_logs`);
+    sendBtn.disabled = false;
+  });
+
+  /* ================= DocMind cache ================= */
+  const dots = $('#dots'); for (let k = 0; k < 8; k++) { const d = document.createElement('div'); d.className = 'cd'; d.textContent = 'LLM'; dots.appendChild(d); }
+  const cds = [...dots.children], HIT = [1, 2, 3, 5, 6, 7]; let cacheOn = true; const cbtn = $('#cache-btn'); const how = $('#how');
+  const renderCache = () => { cds.forEach((d, i) => setTimeout(() => { const h = cacheOn && HIT.includes(i); d.classList.toggle('hit', h); d.textContent = h ? 'gone' : 'LLM'; }, reduce ? 0 : i * 80)); $('#calls').textContent = cacheOn ? 2 : 8; $('#saving').textContent = cacheOn ? '−75%' : 'v1 baseline'; how.style.opacity = cacheOn ? 1 : .35; cbtn.textContent = 'evaluator: ' + (cacheOn ? 'v2' : 'v1'); cbtn.setAttribute('aria-pressed', String(cacheOn)); };
+  cbtn.addEventListener('click', () => { cacheOn = !cacheOn; S.burst = .35; renderCache(); }); renderCache();
+
+  /* ================= Recoup agent ================= */
+  const conf = $('#conf'), thr = $('#thr'); conf.oninput = () => $('#conf-o').textContent = (+conf.value).toFixed(2); thr.oninput = () => $('#thr-o').textContent = (+thr.value).toFixed(2);
+  const nds = Object.fromEntries($$('.graph .nd').map(n => [n.dataset.n, n])), oE = $('#o-exec'), oS = $('#o-esc'), alog = $('#alog'), run = $('#run');
+  const wait = ms => new Promise(r => setTimeout(r, reduce ? 0 : ms));
+  run.addEventListener('click', async () => {
+    run.disabled = true; alog.innerHTML = ''; Object.values(nds).forEach(n => n.className = 'nd'); oE.className = oS.className = 'nd';
+    const th = +thr.value; let c = +conf.value; const id = 'inv_' + Math.random().toString(36).slice(2, 7);
+    const lit = async (k, m) => { nds[k].className = 'nd on'; addLog(alog, m); await wait(480); nds[k].className = 'nd ok'; };
+    await lit('triage', `<span class="u">triage</span> ${id} · recoverable`);
+    for (let a = 1; a <= 3; a++) {
+      $('#att').textContent = a; nds.strategize.className = nds.generate.className = 'nd';
+      await lit('strategize', `<span class="u">strategize</span> attempt ${a}/3`);
+      await lit('generate', `<span class="u">generate</span> outreach + payment link payload`);
+      nds.gate.className = 'nd on'; await wait(380);
+      if (c >= th) { nds.gate.className = 'nd ok'; addLog(alog, `<span class="g">gate pass</span> ${c.toFixed(2)} ≥ ${th.toFixed(2)}`); await wait(250); oE.className = 'nd win'; addLog(alog, `<span class="g">execute</span> Razorpay link (test mode) · email queued · persisted`); S.burst = .5; run.disabled = false; return; }
+      nds.gate.className = 'nd no'; addLog(alog, `<span class="r">gate block</span> ${c.toFixed(2)} &lt; ${th.toFixed(2)}`); c = Math.min(1, c + Math.random() * .05); await wait(300);
+    }
+    oS.className = 'nd esc'; addLog(alog, `<span class="o">escalate</span> max attempts hit · sent to merchant review · persisted`); S.burst = .5; run.disabled = false;
   });
 
   /* copy */
   const cp = $('#copy');
-  cp.addEventListener('click', () => { const t = $('#mail').textContent; const ok = () => { cp.innerHTML = 'Copied'; setTimeout(() => cp.innerHTML = 'Copy<br>email', 1600); }; const fb = () => { const r = document.createRange(); r.selectNodeContents($('#mail')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); cp.innerHTML = 'Press<br>Ctrl+C'; }; try { navigator.clipboard.writeText(t).then(ok, fb); } catch (e) { fb(); } });
-
-  /* marquee */
-  const mq = $('#mq'); let mqx = 0, vel = 0, lastY = scrollY;
-  const mloop = () => { const dy = scrollY - lastY; lastY = scrollY; vel += (dy - vel) * .1; if (!reduce) { mqx -= .7 + Math.abs(vel) * .3; const w = mq.children[0].offsetWidth; if (-mqx >= w) mqx += w; mq.style.transform = `translateX(${mqx}px)`; } requestAnimationFrame(mloop); };
-  requestAnimationFrame(mloop);
-
-  /* statement highlight (works without GSAP too) */
-  const lightWords = () => { const r = stmt.getBoundingClientRect(); const p = Math.min(1, Math.max(0, (innerHeight * .78 - r.top) / (r.height + innerHeight * .35))); const n = Math.round(p * words.length); words.forEach((w, i) => w.classList.toggle('lit', i < n)); };
-  addEventListener('scroll', lightWords, { passive: true }); lightWords();
-
-  const loader = $('#loader');
-  if (!G || reduce) { loader.remove(); if (lenis) lenis.start(); words.forEach(w => w.classList.add('lit')); return; }
-
-  /* ===== loader → intro ===== */
-  const ld = $('#ld'), msg = $('#ld-msg'), msgs = ['Applied AI', 'Routing', 'Retrieval', 'Evaluation', 'Agents'];
-  const o = { v: 0 };
-  const intro = gsap.timeline({ paused: true, defaults: { ease: 'expo.out' } });
-  intro.from('.hero h1 .ch', { yPercent: 115, rotateX: -70, opacity: 0, duration: 1.6, stagger: .022 })
-       .from('.hero-meta', { borderTopColor: 'rgba(0,0,0,0)', duration: 1 }, '-=1.2')
-       .from('.hero-meta > *', { y: 24, opacity: 0, duration: 1.2, stagger: .1 }, '-=1.2')
-       .from('header.nav .wrap > *', { y: -20, opacity: 0, duration: 1, stagger: .1 }, '-=1.1');
-  gsap.timeline()
-    .to(o, { v: 100, duration: 2.1, ease: 'power3.inOut', onUpdate: () => { ld.textContent = Math.round(o.v); msg.textContent = msgs[Math.min(msgs.length - 1, Math.floor(o.v / 20.01))]; } })
-    .to('#loader .num, #loader .top', { yPercent: -40, opacity: 0, duration: .6, ease: 'power3.in' })
-    .to(loader, { clipPath: 'inset(0 0 100% 0)', duration: 1.1, ease: 'expo.inOut' }, '-=.15')
-    .add(() => intro.play(), '-=.75')
-    .add(() => { loader.remove(); if (lenis) lenis.start(); });
-
-  /* hero parallax */
-  gsap.to('.hero h1', { yPercent: -14, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
-  gsap.to('.hero h1 .ln.r', { xPercent: -6, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
-
-  /* section titles: chars rise */
-  $$('.sec-h h2, .contact h2').forEach(h => gsap.from(h.querySelectorAll('.ch'), { yPercent: 110, duration: 1.3, ease: 'expo.out', stagger: .025, scrollTrigger: { trigger: h, start: 'top 85%' } }));
-  $$('.rw').forEach((r, i) => gsap.from(r, { y: 40, opacity: 0, duration: 1.1, ease: 'expo.out', scrollTrigger: { trigger: r, start: 'top 92%' } }));
-  gsap.from('.c-row > *', { y: 40, opacity: 0, duration: 1.2, stagger: .12, ease: 'expo.out', scrollTrigger: { trigger: '.c-row', start: 'top 90%' } });
-  gsap.from('.orb', { scale: 0, rotate: -90, duration: 1.4, ease: 'expo.out', scrollTrigger: { trigger: '.c-row', start: 'top 90%' } });
-
-  /* counters */
-  const runCount = el => { const to = +el.dataset.to, dec = +el.dataset.dec, ob = { v: 0 }; gsap.to(ob, { v: to, duration: 2, ease: 'expo.out', onUpdate: () => el.textContent = ob.v.toFixed(dec) }); };
-
-  /* ===== horizontal work + card reveals ===== */
-  const mm = gsap.matchMedia();
-  mm.add('(min-width: 900px)', () => {
-    const track = $('#htrack');
-    const dist = () => track.scrollWidth - innerWidth;
-    const tween = gsap.to(track, { x: () => -dist(), ease: 'none', scrollTrigger: { trigger: '#work', pin: true, scrub: 1, end: () => '+=' + dist(), invalidateOnRefresh: true, anticipatePin: 1 } });
-    gsap.from('.intro-panel .big .ch, .intro-panel .big', { yPercent: 30, opacity: 0, duration: 1.2, ease: 'expo.out', scrollTrigger: { trigger: '#work', start: 'top 70%' } });
-    $$('.proj-panel').forEach(p => {
-      const card = p.querySelector('.card'), ci = p.querySelector('.ci'), name = p.querySelectorAll('.p-name .ch'), rest = p.querySelectorAll('.p-idx, .p-tag, .p-pts li, .p-links');
-      gsap.fromTo(card, { clipPath: 'inset(100% 0% 0% 0% round 26px)' }, { clipPath: 'inset(0% 0% 0% 0% round 26px)', ease: 'none', scrollTrigger: { trigger: p, containerAnimation: tween, start: 'left 85%', end: 'left 25%', scrub: true } });
-      gsap.fromTo(ci, { scale: 1.25, rotate: 3 }, { scale: 1, rotate: 0, ease: 'none', scrollTrigger: { trigger: p, containerAnimation: tween, start: 'left 85%', end: 'left 15%', scrub: true } });
-      gsap.from(p.querySelector('.acc'), { scale: 0, ease: 'none', scrollTrigger: { trigger: p, containerAnimation: tween, start: 'left 40%', end: 'left 0%', scrub: true } });
-      gsap.from(name, { yPercent: 100, opacity: 0, stagger: .03, duration: 1.1, ease: 'expo.out', scrollTrigger: { trigger: p, containerAnimation: tween, start: 'left 70%' } });
-      gsap.from(rest, { x: 60, opacity: 0, stagger: .07, duration: 1.1, ease: 'expo.out', scrollTrigger: { trigger: p, containerAnimation: tween, start: 'left 62%' } });
-      p.querySelectorAll('.cnt').forEach(el => ScrollTrigger.create({ trigger: p, containerAnimation: tween, start: 'left 45%', once: true, onEnter: () => runCount(el) }));
-      p.querySelectorAll('.flow .st').forEach((s, i) => gsap.from(s, { x: 40, opacity: 0, ease: 'none', scrollTrigger: { trigger: p, containerAnimation: tween, start: `left ${70 - i * 6}%`, end: `left ${45 - i * 6}%`, scrub: true } }));
-    });
-  });
-  mm.add('(max-width: 899px)', () => {
-    $$('.proj-panel').forEach(p => {
-      const card = p.querySelector('.card'), ci = p.querySelector('.ci');
-      gsap.fromTo(card, { clipPath: 'inset(100% 0% 0% 0% round 26px)' }, { clipPath: 'inset(0% 0% 0% 0% round 26px)', ease: 'none', scrollTrigger: { trigger: card, start: 'top 95%', end: 'top 45%', scrub: true } });
-      gsap.fromTo(ci, { scale: 1.2 }, { scale: 1, ease: 'none', scrollTrigger: { trigger: card, start: 'top 95%', end: 'top 40%', scrub: true } });
-      gsap.from(p.querySelectorAll('.p-name .ch'), { yPercent: 100, opacity: 0, stagger: .03, duration: 1.1, ease: 'expo.out', scrollTrigger: { trigger: p, start: 'top 80%' } });
-      p.querySelectorAll('.cnt').forEach(el => ScrollTrigger.create({ trigger: el, start: 'top 85%', once: true, onEnter: () => runCount(el) }));
-    });
-  });
-  addEventListener('load', () => ScrollTrigger.refresh());
-  document.fonts && document.fonts.ready.then(() => ScrollTrigger.refresh());
+  cp.addEventListener('click', () => { const t = $('#mail').textContent; const ok = () => { cp.textContent = 'Copied ✓'; setTimeout(() => cp.textContent = 'Copy email', 1800); }; const fb = () => { const r = document.createRange(); r.selectNodeContents($('#mail')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); cp.textContent = 'Selected · Ctrl+C'; }; try { navigator.clipboard.writeText(t).then(ok, fb); } catch (e) { fb(); } });
 })();
 </script>
 </body></html>
